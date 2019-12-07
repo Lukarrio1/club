@@ -22,6 +22,7 @@
     />
     <!-- Material Design Bootstrap -->
     <link rel="stylesheet" href="{{ asset('css/mdb.min.css') }}" />
+  <link href="{{asset('css/notifIt.css')}}" rel="stylesheet"/>>
 
     <!-- Scripts -->
     <script>
@@ -54,6 +55,7 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"
     ></script>
     <!-- MDB core JavaScript -->
+    <script src="{{asset('js/notifIt.js')}}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/mdb.min.js') }}"></script>
     <script>
