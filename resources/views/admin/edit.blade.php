@@ -63,7 +63,7 @@
               <hr />
             </div>
             <div class="col-sm-12 text-center">
-              <button class="btn btn-danger" id="adminDeleteAccount">
+              <button class="btn btn-danger" id="adminDeleteBtn">
                 <i class="fas fa-trash"></i>
                 &nbsp; Account
               </button>

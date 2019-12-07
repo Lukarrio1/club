@@ -13,9 +13,11 @@ class AdminController extends Controller
      *
      * @return void
      */
+    private $log;
     public function __construct()
     {
         $this->middleware('auth:admin');
+
     }
 
     /**
@@ -49,6 +51,13 @@ class AdminController extends Controller
         $admin->name = htmlentities($request->name);
         $admin->email = htmlentities($request->email);
         $admin->save();
+        return ['status' => 200];
+    }
+
+    public function deleteUser()
+    {
+        $admin = Admin::destroy(Auth::user()->id);
+        Auth::guard('web')->logout();
         return ['status' => 200];
     }
 }

@@ -22,7 +22,7 @@
     />
     <!-- Material Design Bootstrap -->
     <link rel="stylesheet" href="{{ asset('css/mdb.min.css') }}" />
-  <link href="{{asset('css/notifIt.css')}}" rel="stylesheet"/>>
+  <link href="{{asset('css/notifIt.css')}}" rel="stylesheet"/>
 
     <!-- Scripts -->
     <script>
@@ -65,6 +65,10 @@
 
         new WOW().init();
       });
+      $(document).ready(function() {
+        $('.mdb-select').materialSelect();
+      })
+      
     </script>
   </body>
 </html>

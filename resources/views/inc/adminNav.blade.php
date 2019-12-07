@@ -9,39 +9,9 @@
                   <a href="#"><img src="https://mdbootstrap.com/img/logo/mdb-transparent.png" class="img-fluid flex-center"></a>
                 </div>
               </li>
-              <!--/. Logo -->
-              <!--Social-->
-              <li>
-                <ul class="social">
-                  <li><a href="#" class="icons-sm fb-ic"><i class="fab fa-facebook-f"> </i></a></li>
-                  <li><a href="#" class="icons-sm pin-ic"><i class="fab fa-pinterest"> </i></a></li>
-                  <li><a href="#" class="icons-sm gplus-ic"><i class="fab fa-google-plus-g"> </i></a></li>
-                  <li><a href="#" class="icons-sm tw-ic"><i class="fab fa-twitter"> </i></a></li>
-                </ul>
-              </li>
-              <!--/Social-->
-              <!--Search Form-->
-              <li>
-                <form class="search-form" role="search">
-                  <div class="form-group md-form mt-0 pt-1 waves-light">
-                    <input type="text" class="form-control" placeholder="Search">
-                  </div>
-                </form>
-              </li>
-              <!--/.Search Form-->
-              <!-- Side navigation links -->
               <li>
                 <ul class="collapsible collapsible-accordion">
-                  <li><a class="collapsible-header waves-effect arrow-r"><i class="fas fa-chevron-right"></i> Submit blog<i
-                        class="fas fa-angle-down rotate-icon"></i></a>
-                    <div class="collapsible-body">
-                      <ul class="list-unstyled">
-                        <li><a href="#" class="waves-effect">Submit listing</a>
-                        </li>
-                        <li><a href="#" class="waves-effect">Registration form</a>
-                        </li>
-                      </ul>
-                    </div>
+                <li><a class="text-dark waves-effect" href="{{route('admin.users')}}"><i class="fas fa-user-friends"></i> Users</a>
                   </li>
                   <li><a class="collapsible-header waves-effect arrow-r"><i class="fas fa-hand-pointer"></i> Instruction<i
                         class="fas fa-angle-down rotate-icon"></i></a>
@@ -104,7 +74,7 @@
               <p>Material Design for Bootstrap</p>
             </div>
             <ul class="nav navbar-nav nav-flex-icons ml-auto">
-              <li class="nav-item">
+              {{-- <li class="nav-item">
                 <a class="nav-link"><i class="fas fa-envelope"></i> <span class="clearfix d-none d-sm-inline-block">Contact</span></a>
               </li>
               <li class="nav-item">
@@ -112,14 +82,14 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link"><i class="fas fa-user"></i> <span class="clearfix d-none d-sm-inline-block">Account</span></a>
-              </li>
+              </li> --}}
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
                   aria-haspopup="true" aria-expanded="false">
                 <span id="navAdminName"></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="{{route('admin.edit')}}"><i class="fas fa-user"></i> Profile</a>
+                <a class="dropdown-item" href="{{route('admin.edit')}}"><i class="fas fa-user"></i> My Account</a>
                  <a href="{{ route('logout') }}"
                  class="dropdown-item"
                         onclick="event.preventDefault();
@@ -128,11 +98,13 @@
                     </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                             {{ csrf_field() }}
+                      
                         </form>
                 </div>
               </li>
             </ul>
           </nav>
           <!-- /.Navbar -->
+
         </header>
      

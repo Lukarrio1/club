@@ -1,16 +1,28 @@
 import axios from "axios";
 import $ from "jquery";
+var toast = require("../components/toast");
 
 var navAdminName = document.querySelector("#navAdminName");
 var adminEditForm = document.querySelector("#editAdmin");
 var adminEditFields = document.querySelectorAll(".editAdmin");
+var adminDeleteBtn = document.querySelector("#adminDeleteBtn");
 /**
- * Event listeners
- */
+this event listens out for a submit event on the admin update form
+*/
 if (adminEditForm) {
   adminEditForm.addEventListener("submit", e => {
     e.preventDefault();
     updateAdmin();
+  });
+}
+
+/**
+ * 
+ this even listens out for a click event on the admin delete btn
+ */
+if (adminDeleteBtn) {
+  adminDeleteBtn.addEventListener("click", () => {
+    adminDelete();
   });
 }
 /**
@@ -29,7 +41,6 @@ var getAdmin = async () => {
         }
       });
     });
-    console.log(admin);
     $("#adminName").html(admin.data.name);
     $("#adminEmail").html(admin.data.email);
   } catch (err) {
@@ -48,11 +59,7 @@ var updateAdmin = async () => {
   let pass = false;
   adminEditFields.forEach(f => {
     if (f.value == "") {
-      notif({
-        msg: `Field ${f.name} is empty or invalid`,
-        type: "error",
-        position: "center"
-      });
+      toast.toast(`Field ${f.name} is empty or invalid`, "error", "center");
     } else {
       pass = true;
       fd.append(f.name, f.value);
@@ -60,15 +67,19 @@ var updateAdmin = async () => {
   });
   try {
     await axios.post("/admin/edit", fd);
-    notif({
-      msg: `Admin details was updated successfully.`,
-      type: "success",
-      position: "center"
-    });
+    toast.toast("Admin details was updated successfully.", "success", "center");
     getAdmin();
   } catch (err) {
     throw err;
   }
 };
 
-var adminDelete = async () => {};
+var adminDelete = async () => {
+  try {
+    await axios.delete("/admin/delete");
+    toast.toast("Admin account deleted successfully", "success", "center");
+    setTimeout(() => (location.href = "/"), 5000);
+  } catch (err) {
+    throw err;
+  }
+};
