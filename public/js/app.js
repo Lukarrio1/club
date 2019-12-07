@@ -11535,8 +11535,11 @@ process.umask = function() { return 0; };
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__js_admin_admin_js__ = __webpack_require__(43);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -29627,6 +29630,35 @@ module.exports = function(module) {
 __webpack_require__(9);
 module.exports = __webpack_require__(10);
 
+
+/***/ }),
+/* 35 */,
+/* 36 */,
+/* 37 */,
+/* 38 */,
+/* 39 */,
+/* 40 */,
+/* 41 */,
+/* 42 */,
+/* 43 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
+var navAdminName = document.querySelector("#navAdminName");
+
+
+var getAdmin = async function getAdmin() {
+  try {
+    var admin = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/data");
+    navAdminName.innerHTML = admin.data.name;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+getAdmin();
 
 /***/ })
 /******/ ]);

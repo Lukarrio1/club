@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Admin;
+use Illuminate\Support\Facades\Auth;
+
 class AdminController extends Controller
 {
     /**
@@ -27,5 +30,10 @@ class AdminController extends Controller
     public function edit()
     {
         return view('admin.edit');
+    }
+
+    public function getAdmin()
+    {
+        return Admin::find(Auth::user()->id);
     }
 }
