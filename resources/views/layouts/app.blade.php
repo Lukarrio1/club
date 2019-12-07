@@ -11,7 +11,12 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
+
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/mdb.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/style.min.css') }}" rel="stylesheet">
+
 
     <!-- Scripts -->
     <script>
@@ -83,5 +88,10 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('/public/js/jquery-3.4.1.min.js) }}"></script>
+    <script src="{{ asset('/public/js/popper.min.js') }}"></script>
+    <script src="{{ asset('/public/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('/public/js/mdb.min.js') }}"></script>
+
 </body>
 </html>
