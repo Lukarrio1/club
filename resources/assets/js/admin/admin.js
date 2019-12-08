@@ -29,7 +29,7 @@ if (adminDeleteBtn) {
  * getAdmin, this function gets the current logged in user.
  * @return void
  */
-var getAdmin = async () => {
+var getAdmin = async (key = false) => {
   try {
     let admin = await axios.get("/admin/data");
     navAdminName.innerHTML = admin.data.name;
@@ -43,6 +43,7 @@ var getAdmin = async () => {
     });
     $("#adminName").html(admin.data.name);
     $("#adminEmail").html(admin.data.email);
+    return key != false ? admin.data[key] : admin.data;
   } catch (err) {
     throw err;
   }
@@ -83,3 +84,5 @@ var adminDelete = async () => {
     throw err;
   }
 };
+
+export { getAdmin };

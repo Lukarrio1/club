@@ -14,6 +14,18 @@ class ClubController extends Controller
 
     public function index()
     {
+        $this->dummyClub();
         return Club::all();
     }
+
+    public function dummyClub()
+    {
+        $name = str_random(8);
+        $location = str_random(8);
+        $club = new Club;
+        $club->name = $name;
+        $club->location = $location;
+        $club->save();
+    }
+
 }

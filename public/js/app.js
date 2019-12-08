@@ -12408,6 +12408,7 @@ module.exports = function spread(callback) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* unused harmony export getAdmin */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery__ = __webpack_require__(8);
@@ -12444,6 +12445,8 @@ if (adminDeleteBtn) {
  * @return void
  */
 var getAdmin = async function getAdmin() {
+  var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
   try {
     var admin = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/data");
     navAdminName.innerHTML = admin.data.name;
@@ -12457,6 +12460,7 @@ var getAdmin = async function getAdmin() {
     });
     __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#adminName").html(admin.data.name);
     __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#adminEmail").html(admin.data.email);
+    return key != false ? admin.data[key] : admin.data;
   } catch (err) {
     throw err;
   }
@@ -12499,6 +12503,8 @@ var adminDelete = async function adminDelete() {
     throw err;
   }
 };
+
+
 
 /***/ }),
 /* 30 */
@@ -29778,11 +29784,18 @@ if (searchUser) {
 if (parishSort) {
   parishSort.addEventListener("change", function () {
     SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+    console.log(parishSort.value);
   });
 }
 
 if (limit) {
   limit.addEventListener("change", function () {
+    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+  });
+}
+
+if (clubSort) {
+  clubSort.addEventListener("change", function () {
     SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
   });
 }
@@ -29849,6 +29862,37 @@ var SearchUser = async function SearchUser() {
   fd.append("search", search);
   try {
     var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/user/search", fd);
+    var pSort = res.data.filter(function (p) {
+      return p.parish == parish;
+    });
+    var cSort = res.data.filter(function (c) {
+      return c.club.name == club;
+    });
+    var result = [];
+    if (parish != "all") {
+      result = cSort.length > 0 || club == "all" ? pSort.slice(0, limit) : [];
+    } else if (club != "all") {
+      result = pSort.length > 0 || parish == "all" ? cSort.slice(0, limit) : [];
+    } else if (parish == "all" && club == "all") {
+      result = res.data.slice(0, limit);
+    } else {
+      result = res.data;
+    }
+    if (limitMax) {
+      limitMax.innerHTML = "All Users";
+      limitMax.value = res.data.length;
+    }
+    console.table(result);
+    result.forEach(function (r) {
+      console.log(r.club);
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+var clubDropDown = async function clubDropDown() {
+  try {
     var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
     clubs.data.push({ name: "all", location: "Sort By Club" });
     var clubOut = "";
@@ -29858,31 +29902,10 @@ var SearchUser = async function SearchUser() {
       clubOut += "<option value=\"" + c.name + "\" " + selected + ">" + name + "</option>";
     });
     clubSort.innerHTML = clubOut;
-    if (limitMax) {
-      limitMax.innerHTML = "All Users";
-      limitMax.value = res.data.length;
-    }
-    var pSort = res.data.filter(function (p) {
-      return p.parish == parish;
-    });
-    var cSort = res.data.filter(function (c) {
-      return c.club == club;
-    });
-    var result = Array();
-    if (parish != "all") {
-      result = pSort.slice(0, limit);
-    } else if (club != "all") {
-      result = cSort.slice(0, limit);
-    } else if (parish == "all" && club == "all") {
-      result = res.data.slice(0, limit);
-    } else {
-      result = res.data;
-    }
-    console.table(result);
-  } catch (err) {
-    console.log(err);
-  }
+  } catch (err) {}
 };
+
+clubDropDown();
 SearchUser();
 
 /***/ }),

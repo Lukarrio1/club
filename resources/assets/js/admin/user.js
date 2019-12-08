@@ -37,11 +37,18 @@ if (searchUser) {
 if (parishSort) {
   parishSort.addEventListener("change", () => {
     SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+    console.log(parishSort.value);
   });
 }
 
 if (limit) {
   limit.addEventListener("change", () => {
+    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+  });
+}
+
+if (clubSort) {
+  clubSort.addEventListener("change", () => {
     SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
   });
 }
@@ -134,6 +141,33 @@ var SearchUser = async (
   fd.append("search", search);
   try {
     let res = await axios.post("/admin/user/search", fd);
+    let pSort = res.data.filter(p => p.parish == parish);
+    let cSort = res.data.filter(c => c.club.name == club);
+    let result = [];
+    if (parish != "all") {
+      result = cSort.length > 0 || club == "all" ? pSort.slice(0, limit) : [];
+    } else if (club != "all") {
+      result = pSort.length > 0 || parish == "all" ? cSort.slice(0, limit) : [];
+    } else if (parish == "all" && club == "all") {
+      result = res.data.slice(0, limit);
+    } else {
+      result = res.data;
+    }
+    if (limitMax) {
+      limitMax.innerHTML = "All Users";
+      limitMax.value = res.data.length;
+    }
+    console.table(result);
+    result.forEach(r => {
+      console.log(r.club);
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+var clubDropDown = async () => {
+  try {
     let clubs = await axios.get("/admin/clubs");
     clubs.data.push({ name: "all", location: "Sort By Club" });
     let clubOut = "";
@@ -143,25 +177,8 @@ var SearchUser = async (
       clubOut += `<option value="${c.name}" ${selected}>${name}</option>`;
     });
     clubSort.innerHTML = clubOut;
-    if (limitMax) {
-      limitMax.innerHTML = "All Users";
-      limitMax.value = res.data.length;
-    }
-    let pSort = res.data.filter(p => p.parish == parish);
-    let cSort = res.data.filter(c => c.club == club);
-    let result = Array();
-    if (parish != "all") {
-      result = pSort.slice(0, limit);
-    } else if (club != "all") {
-      result = cSort.slice(0, limit);
-    } else if (parish == "all" && club == "all") {
-      result = res.data.slice(0, limit);
-    } else {
-      result = res.data;
-    }
-    console.table(result);
-  } catch (err) {
-    console.log(err);
-  }
+  } catch (err) {}
 };
+
+clubDropDown();
 SearchUser();

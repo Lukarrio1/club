@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+// use App\Club
+use App\Club;
 use App\Http\Controllers\Controller;
-use App\Notifications\newUser;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -27,7 +28,7 @@ class UserController extends Controller
         ]);
         $email = htmlentities($request->email);
         $avail = User::where('email', $email)->first();
-        return !empty($avail) ? ['status' => 1] : ['status' => 0];
+        return ['status' => !empty($avail) ? 1 : 0];
     }
 
     public function store(Request $request)
@@ -62,15 +63,16 @@ class UserController extends Controller
         $store->age = $age;
         $store->password = $password;
         $store->gender = $gender;
+        $store->club_id = 1;
         $store->save();
-        $this->notify(new newUser($name, $request->password));
+        // $this->newUSer(new newUser($name, $request->password));
         return ['status' => 200];
     }
 
     public function searchUser(Request $request)
     {
         $search = htmlentities($request->search);
-        $result = $search != "all" ? User::where('name', 'LIKE', '%' . $search . '%')
+        $results = $search != "all" ? User::where('name', 'LIKE', '%' . $search . '%')
             ->orWhere('email', 'LIKE', '%' . $search . '%')
             ->orWhere('parish', 'LIKE', '%' . $search . '%')
             ->orWhere('trn', 'LIKE', '%' . $search . '%')
@@ -80,6 +82,22 @@ class UserController extends Controller
             ->orWhere('telephone', 'LIKE', '%' . $search . '%')
             ->orderby('created_at', 'desc')
             ->get() : User::all();
-        return $result;
+        $users = array();
+        foreach ($results as $user) {
+            $club = Club::find($user->club_id);
+            $users[] = [
+                'name' => $user->name,
+                'email' => $user->email,
+                'age' => $user->age,
+                'phone' => $user->telephone,
+                'address' => $user->address,
+                'trn' => $user->trn,
+                'id' => $user->id,
+                'gender' => $user->gender,
+                'club' => $club,
+                'parish' => $user->parish,
+            ];
+        }
+        return $users;
     }
 }
