@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\newUser;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -62,6 +63,23 @@ class UserController extends Controller
         $store->password = $password;
         $store->gender = $gender;
         $store->save();
+        $this->notify(new newUser($name, $request->password));
         return ['status' => 200];
+    }
+
+    public function searchUser(Request $request)
+    {
+        $search = htmlentities($request->search);
+        $result = $search != "all" ? User::where('name', 'LIKE', '%' . $search . '%')
+            ->orWhere('email', 'LIKE', '%' . $search . '%')
+            ->orWhere('parish', 'LIKE', '%' . $search . '%')
+            ->orWhere('trn', 'LIKE', '%' . $search . '%')
+            ->orWhere('address', 'LIKE', '%' . $search . '%')
+            ->orWhere('gender', 'LIKE', '%' . $search . '%')
+            ->orWhere('age', 'LIKE', '%' . $search . '%')
+            ->orWhere('telephone', 'LIKE', '%' . $search . '%')
+            ->orderby('created_at', 'desc')
+            ->get() : User::all();
+        return $result;
     }
 }

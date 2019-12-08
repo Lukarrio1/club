@@ -33,6 +33,8 @@ Route::prefix('admin')->group(function () {
     Route::get('/users', 'Admin\UserController@userPage')->name('admin.users');
     Route::post('/user/emailCheck', 'Admin\UserController@emailCheck');
     Route::post('/create', 'Admin\UserController@store');
+    Route::post('/user/search', 'Admin\UserController@searchUser');
+    Route::get('/clubs', 'Admin\ClubController@index');
 
     // Password reset routes
     Route::post('/password/email', 'Auth\AdminForgotPasswordController@sendResetLinkEmail')->name('admin.password.email');

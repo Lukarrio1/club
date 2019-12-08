@@ -29754,7 +29754,11 @@ var val = __webpack_require__(45);
 var fields = document.querySelectorAll(".createUser");
 var createUserForm = document.querySelector("#createUserForm");
 var closeCreateUserModalBtn = document.querySelector("#closeCreateUserModalBtn");
-
+var searchUser = document.querySelector("#searchUser");
+var parishSort = document.querySelector("#parishSort");
+var clubSort = document.querySelector("#clubSort");
+var limit = document.querySelector("#limit");
+var limitMax = document.querySelector("#limitMax");
 /**
 Event Listeners
 */
@@ -29762,6 +29766,24 @@ if (createUserForm) {
   createUserForm.addEventListener("submit", function (e) {
     e.preventDefault();
     CreateUser();
+  });
+}
+
+if (searchUser) {
+  searchUser.addEventListener("keyup", function () {
+    SearchUser(searchUser.value.length > 3 ? searchUser.value : "all", parishSort.value, clubSort.value, limit.value);
+  });
+}
+
+if (parishSort) {
+  parishSort.addEventListener("change", function () {
+    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+  });
+}
+
+if (limit) {
+  limit.addEventListener("change", function () {
+    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
   });
 }
 
@@ -29812,10 +29834,56 @@ var CreateUser = async function CreateUser() {
         return f.value = "";
       });
     } catch (err) {
-      console.log(err);
+      throw err;
     }
   }
 };
+
+var SearchUser = async function SearchUser() {
+  var search = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "all";
+  var parish = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "all";
+  var club = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "all";
+  var limit = arguments[3];
+
+  var fd = new FormData();
+  fd.append("search", search);
+  try {
+    var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/user/search", fd);
+    var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
+    clubs.data.push({ name: "all", location: "Sort By Club" });
+    var clubOut = "";
+    clubs.data.forEach(function (c) {
+      var name = c.name == "all" ? c.location : c.name;
+      var selected = c.name == "all" ? "selected" : "";
+      clubOut += "<option value=\"" + c.name + "\" " + selected + ">" + name + "</option>";
+    });
+    clubSort.innerHTML = clubOut;
+    if (limitMax) {
+      limitMax.innerHTML = "All Users";
+      limitMax.value = res.data.length;
+    }
+    var pSort = res.data.filter(function (p) {
+      return p.parish == parish;
+    });
+    var cSort = res.data.filter(function (c) {
+      return c.club == club;
+    });
+    var result = Array();
+    if (parish != "all") {
+      result = pSort.slice(0, limit);
+    } else if (club != "all") {
+      result = cSort.slice(0, limit);
+    } else if (parish == "all" && club == "all") {
+      result = res.data.slice(0, limit);
+    } else {
+      result = res.data;
+    }
+    console.table(result);
+  } catch (err) {
+    console.log(err);
+  }
+};
+SearchUser();
 
 /***/ }),
 /* 44 */

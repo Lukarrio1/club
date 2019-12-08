@@ -8,7 +8,11 @@ var createUserForm = document.querySelector("#createUserForm");
 var closeCreateUserModalBtn = document.querySelector(
   "#closeCreateUserModalBtn"
 );
-
+var searchUser = document.querySelector("#searchUser");
+var parishSort = document.querySelector("#parishSort");
+var clubSort = document.querySelector("#clubSort");
+var limit = document.querySelector("#limit");
+var limitMax = document.querySelector("#limitMax");
 /**
 Event Listeners
 */
@@ -16,6 +20,29 @@ if (createUserForm) {
   createUserForm.addEventListener("submit", e => {
     e.preventDefault();
     CreateUser();
+  });
+}
+
+if (searchUser) {
+  searchUser.addEventListener("keyup", () => {
+    SearchUser(
+      searchUser.value.length > 3 ? searchUser.value : "all",
+      parishSort.value,
+      clubSort.value,
+      limit.value
+    );
+  });
+}
+
+if (parishSort) {
+  parishSort.addEventListener("change", () => {
+    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+  });
+}
+
+if (limit) {
+  limit.addEventListener("change", () => {
+    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
   });
 }
 
@@ -92,7 +119,49 @@ var CreateUser = async () => {
       );
       fields.forEach(f => (f.value = ""));
     } catch (err) {
-      console.log(err);
+      throw err;
     }
   }
 };
+
+var SearchUser = async (
+  search = "all",
+  parish = "all",
+  club = "all",
+  limit
+) => {
+  let fd = new FormData();
+  fd.append("search", search);
+  try {
+    let res = await axios.post("/admin/user/search", fd);
+    let clubs = await axios.get("/admin/clubs");
+    clubs.data.push({ name: "all", location: "Sort By Club" });
+    let clubOut = "";
+    clubs.data.forEach(c => {
+      let name = c.name == "all" ? c.location : c.name;
+      let selected = c.name == "all" ? "selected" : "";
+      clubOut += `<option value="${c.name}" ${selected}>${name}</option>`;
+    });
+    clubSort.innerHTML = clubOut;
+    if (limitMax) {
+      limitMax.innerHTML = "All Users";
+      limitMax.value = res.data.length;
+    }
+    let pSort = res.data.filter(p => p.parish == parish);
+    let cSort = res.data.filter(c => c.club == club);
+    let result = Array();
+    if (parish != "all") {
+      result = pSort.slice(0, limit);
+    } else if (club != "all") {
+      result = cSort.slice(0, limit);
+    } else if (parish == "all" && club == "all") {
+      result = res.data.slice(0, limit);
+    } else {
+      result = res.data;
+    }
+    console.table(result);
+  } catch (err) {
+    console.log(err);
+  }
+};
+SearchUser();

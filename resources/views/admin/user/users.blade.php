@@ -11,11 +11,12 @@
                   type="text"
                   class="form-control"
                   placeholder="Search User"
+                  id="searchUser"
                 />
               </div>
             </div>
             <div class="col-sm-1 mt-4 ">
-              <span class="badge badge-info">30</span>
+              <span class="badge badge-info" id="allUserCount">30</span>
             </div>
             <div class="col-sm-2 mt-4 text-left">
               <a
@@ -33,9 +34,10 @@
                 class="mdb-select md-form colorful-select dropdown-success"
                 data-val="true"
                 data-val-required="The RoleID field is required."
-                id="RoleID"
-                name="RoleID"
+                id="limit"
+                name="limit"
               >
+              <option id="limitMax" selected></option>
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="40">40</option>
@@ -50,24 +52,35 @@
                 class="mdb-select md-form colorful-select dropdown-success"
                 data-val="true"
                 data-val-required="The RoleID field is required."
-                id="RoleID"
-                name="RoleID"
+                id="clubSort"
+                name="clubSort"
               >
-                <option value="mdv">Mandeville club</option>
-                <option value="kng">Kingston club</option>
+      
               </select>
-              <label class="mdb-main-label" for="RoleID">Show Club</label>
+              <label class="mdb-main-label" for="clubSort">Show Club</label>
             </div>
             <div class="col-sm-4">
               <select
                 class="mdb-select md-form colorful-select dropdown-success"
                 data-val="true"
                 data-val-required="The RoleID field is required."
-                id="RoleID"
-                name="RoleID"
+                id="parishSort"
+                name="parishSort"
               >
-                <option value="mdv">Mandeville</option>
-                <option value="kng">Kingston</option>
+              <option value="all" selected>Sort by Parish</option>
+                <option value="Manchester">Manchester</option>
+                <option value="kingston">Kingston</option>
+                <option value="Saint Elizabeth">Saint Elizabeth</option>
+                <option value="Hanover">Hanover</option>
+                <option value="Saint James">Saint James</option>
+                <option value="Westmoreland">Westmoreland</option>
+                <option value="Clarendon">Clarendon</option>
+                <option value="Saint Ann">Saint Ann</option>
+                <option value="Saint Catherine">Saint Catherine</option>
+                <option value="Saint Mary">Saint Mary</option>
+                <option value="Portland">Portland</option>
+                <option value="Saint Andrew">Saint Andrew</option>
+                <option value="Saint Thomas">Saint Thomas</option>
               </select>
               <label class="mdb-main-label" for="RoleID">Show parish</label>
             </div>
@@ -180,14 +193,27 @@
               />
             </div>
           <div class="md-form mb-5">
-            <i class="fas fa-city prefix grey-text"></i>
-            <input
-            type="text"
-            id="parish"
-            name="parish"
-            class="form-control createUser"
-            placeholder="Member Parish"
-            />
+            <select
+                class="mdb-select md-form colorful-select dropdown-success"
+                data-val="true"
+                id="parish"
+                name="parish"
+              >
+              <option selected disabled>Member Parish</option>
+                <option value="Manchester">Manchester</option>
+                <option value="kingston">Kingston</option>
+                <option value="Saint Elizabeth">Saint Elizabeth</option>
+                <option value="Hanover">Hanover</option>
+                <option value="Saint James">Saint James</option>
+                <option value="Westmoreland">Westmoreland</option>
+                <option value="Clarendon">Clarendon</option>
+                <option value="Saint Ann">Saint Ann</option>
+                <option value="Saint Catherine">Saint Catherine</option>
+                <option value="Saint Mary">Saint Mary</option>
+                <option value="Portland">Portland</option>
+                <option value="Saint Andrew">Saint Andrew</option>
+                <option value="Saint Thomas">Saint Thomas</option>
+              </select>
           </div>
           <div class="md-form mb-5">
             <i class="fas fa-list-ol prefix grey-text"></i>
@@ -247,7 +273,7 @@
         <div class="md-form mb-5">
             <i class="fas fa-lock  prefix grey-text"></i>
             <input
-            type="password"
+            type="text"
               id="password"
               name="password"
               class="form-control createUser"
