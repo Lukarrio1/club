@@ -14,6 +14,7 @@ class ClubController extends Controller
 
     public function index()
     {
+        //$this->dummyClub();
         return Club::all();
     }
 
@@ -27,4 +28,9 @@ class ClubController extends Controller
         $club->save();
     }
 
-}
+        public function clubPage()
+        {
+            return view('admin.user.club');
+        }
+
+    }

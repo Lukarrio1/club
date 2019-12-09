@@ -13,16 +13,10 @@
                 <ul class="collapsible collapsible-accordion">
                 <li><a class="text-dark waves-effect" href="{{route('admin.users')}}"><i class="fas fa-user-friends"></i> Users</a>
                   </li>
-                  <li><a class="collapsible-header waves-effect arrow-r"><i class="fas fa-hand-pointer"></i> Instruction<i
-                        class="fas fa-angle-down rotate-icon"></i></a>
-                    <div class="collapsible-body">
-                      <ul class="list-unstyled">
-                        <li><a href="#" class="waves-effect">For bloggers</a>
-                        </li>
-                        <li><a href="#" class="waves-effect">For authors</a>
-                        </li>
-                      </ul>
-                    </div>
+                  <li><a href="{{route('admin.clubs')}}" class="collapsible-header waves-effect"><i class="fas fa-university"></i> Clubs
+
+               </a>
+                    
                   </li>
                   <li><a class="collapsible-header waves-effect arrow-r"><i class="fas fa-eye"></i> About<i class="fas fa-angle-down rotate-icon"></i></a>
                     <div class="collapsible-body">
@@ -98,7 +92,7 @@
                     </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                             {{ csrf_field() }}
-                      
+
                         </form>
                 </div>
               </li>
@@ -107,4 +101,3 @@
           <!-- /.Navbar -->
 
         </header>
-     
