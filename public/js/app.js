@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "./";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 34);
+/******/ 	return __webpack_require__(__webpack_require__.s = 37);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -73,7 +73,7 @@
 "use strict";
 
 
-var bind = __webpack_require__(7);
+var bind = __webpack_require__(8);
 
 /*global toString:true*/
 
@@ -376,11 +376,17 @@ module.exports = {
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
+module.exports = __webpack_require__(13);
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(26);
+var normalizeHeaderName = __webpack_require__(27);
 
 var PROTECTION_PREFIX = /^\)\]\}',?\n/;
 var DEFAULT_CONTENT_TYPE = {
@@ -397,10 +403,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(3);
+    adapter = __webpack_require__(4);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(3);
+    adapter = __webpack_require__(4);
   }
   return adapter;
 }
@@ -471,281 +477,10 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(12);
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-var utils = __webpack_require__(0);
-var settle = __webpack_require__(18);
-var buildURL = __webpack_require__(21);
-var parseHeaders = __webpack_require__(27);
-var isURLSameOrigin = __webpack_require__(25);
-var createError = __webpack_require__(6);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(20);
-
-module.exports = function xhrAdapter(config) {
-  return new Promise(function dispatchXhrRequest(resolve, reject) {
-    var requestData = config.data;
-    var requestHeaders = config.headers;
-
-    if (utils.isFormData(requestData)) {
-      delete requestHeaders['Content-Type']; // Let the browser set it
-    }
-
-    var request = new XMLHttpRequest();
-    var loadEvent = 'onreadystatechange';
-    var xDomain = false;
-
-    // For IE 8/9 CORS support
-    // Only supports POST and GET calls and doesn't returns the response headers.
-    // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
-    if (process.env.NODE_ENV !== 'test' &&
-        typeof window !== 'undefined' &&
-        window.XDomainRequest && !('withCredentials' in request) &&
-        !isURLSameOrigin(config.url)) {
-      request = new window.XDomainRequest();
-      loadEvent = 'onload';
-      xDomain = true;
-      request.onprogress = function handleProgress() {};
-      request.ontimeout = function handleTimeout() {};
-    }
-
-    // HTTP basic authentication
-    if (config.auth) {
-      var username = config.auth.username || '';
-      var password = config.auth.password || '';
-      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
-    }
-
-    request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
-
-    // Set the request timeout in MS
-    request.timeout = config.timeout;
-
-    // Listen for ready state
-    request[loadEvent] = function handleLoad() {
-      if (!request || (request.readyState !== 4 && !xDomain)) {
-        return;
-      }
-
-      // The request errored out and we didn't get a response, this will be
-      // handled by onerror instead
-      // With one exception: request that using file: protocol, most browsers
-      // will return status as 0 even though it's a successful request
-      if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
-        return;
-      }
-
-      // Prepare the response
-      var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
-      var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
-      var response = {
-        data: responseData,
-        // IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
-        status: request.status === 1223 ? 204 : request.status,
-        statusText: request.status === 1223 ? 'No Content' : request.statusText,
-        headers: responseHeaders,
-        config: config,
-        request: request
-      };
-
-      settle(resolve, reject, response);
-
-      // Clean up request
-      request = null;
-    };
-
-    // Handle low level network errors
-    request.onerror = function handleError() {
-      // Real errors are hidden from us by the browser
-      // onerror should only fire if it's a network error
-      reject(createError('Network Error', config));
-
-      // Clean up request
-      request = null;
-    };
-
-    // Handle timeout
-    request.ontimeout = function handleTimeout() {
-      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED'));
-
-      // Clean up request
-      request = null;
-    };
-
-    // Add xsrf header
-    // This is only done if running in a standard browser environment.
-    // Specifically not if we're in a web worker, or react-native.
-    if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(23);
-
-      // Add xsrf header
-      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
-          cookies.read(config.xsrfCookieName) :
-          undefined;
-
-      if (xsrfValue) {
-        requestHeaders[config.xsrfHeaderName] = xsrfValue;
-      }
-    }
-
-    // Add headers to the request
-    if ('setRequestHeader' in request) {
-      utils.forEach(requestHeaders, function setRequestHeader(val, key) {
-        if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
-          // Remove Content-Type if data is undefined
-          delete requestHeaders[key];
-        } else {
-          // Otherwise add header to the request
-          request.setRequestHeader(key, val);
-        }
-      });
-    }
-
-    // Add withCredentials to request if needed
-    if (config.withCredentials) {
-      request.withCredentials = true;
-    }
-
-    // Add responseType to request if needed
-    if (config.responseType) {
-      try {
-        request.responseType = config.responseType;
-      } catch (e) {
-        if (request.responseType !== 'json') {
-          throw e;
-        }
-      }
-    }
-
-    // Handle progress if needed
-    if (typeof config.onDownloadProgress === 'function') {
-      request.addEventListener('progress', config.onDownloadProgress);
-    }
-
-    // Not all browsers support upload events
-    if (typeof config.onUploadProgress === 'function' && request.upload) {
-      request.upload.addEventListener('progress', config.onUploadProgress);
-    }
-
-    if (config.cancelToken) {
-      // Handle cancellation
-      config.cancelToken.promise.then(function onCanceled(cancel) {
-        if (!request) {
-          return;
-        }
-
-        request.abort();
-        reject(cancel);
-        // Clean up request
-        request = null;
-      });
-    }
-
-    if (requestData === undefined) {
-      requestData = null;
-    }
-
-    // Send the request
-    request.send(requestData);
-  });
-};
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * A `Cancel` is an object that is thrown when an operation is canceled.
- *
- * @class
- * @param {string=} message The message.
- */
-function Cancel(message) {
-  this.message = message;
-}
-
-Cancel.prototype.toString = function toString() {
-  return 'Cancel' + (this.message ? ': ' + this.message : '');
-};
-
-Cancel.prototype.__CANCEL__ = true;
-
-module.exports = Cancel;
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function isCancel(value) {
-  return !!(value && value.__CANCEL__);
-};
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var enhanceError = __webpack_require__(17);
-
-/**
- * Create an Error with the specified message, config, error code, and response.
- *
- * @param {string} message The error message.
- * @param {Object} config The config.
- * @param {string} [code] The error code (for example, 'ECONNABORTED').
- @ @param {Object} [response] The response.
- * @returns {Error} The created error.
- */
-module.exports = function createError(message, config, code, response) {
-  var error = new Error(message);
-  return enhanceError(error, config, code, response);
-};
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function bind(fn, thisArg) {
-  return function wrap() {
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; i++) {
-      args[i] = arguments[i];
-    }
-    return fn.apply(thisArg, args);
-  };
-};
-
-
-/***/ }),
-/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -11350,7 +11085,286 @@ return jQuery;
 
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+var utils = __webpack_require__(0);
+var settle = __webpack_require__(19);
+var buildURL = __webpack_require__(22);
+var parseHeaders = __webpack_require__(28);
+var isURLSameOrigin = __webpack_require__(26);
+var createError = __webpack_require__(7);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(21);
+
+module.exports = function xhrAdapter(config) {
+  return new Promise(function dispatchXhrRequest(resolve, reject) {
+    var requestData = config.data;
+    var requestHeaders = config.headers;
+
+    if (utils.isFormData(requestData)) {
+      delete requestHeaders['Content-Type']; // Let the browser set it
+    }
+
+    var request = new XMLHttpRequest();
+    var loadEvent = 'onreadystatechange';
+    var xDomain = false;
+
+    // For IE 8/9 CORS support
+    // Only supports POST and GET calls and doesn't returns the response headers.
+    // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
+    if (process.env.NODE_ENV !== 'test' &&
+        typeof window !== 'undefined' &&
+        window.XDomainRequest && !('withCredentials' in request) &&
+        !isURLSameOrigin(config.url)) {
+      request = new window.XDomainRequest();
+      loadEvent = 'onload';
+      xDomain = true;
+      request.onprogress = function handleProgress() {};
+      request.ontimeout = function handleTimeout() {};
+    }
+
+    // HTTP basic authentication
+    if (config.auth) {
+      var username = config.auth.username || '';
+      var password = config.auth.password || '';
+      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
+    }
+
+    request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
+
+    // Set the request timeout in MS
+    request.timeout = config.timeout;
+
+    // Listen for ready state
+    request[loadEvent] = function handleLoad() {
+      if (!request || (request.readyState !== 4 && !xDomain)) {
+        return;
+      }
+
+      // The request errored out and we didn't get a response, this will be
+      // handled by onerror instead
+      // With one exception: request that using file: protocol, most browsers
+      // will return status as 0 even though it's a successful request
+      if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
+        return;
+      }
+
+      // Prepare the response
+      var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
+      var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
+      var response = {
+        data: responseData,
+        // IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
+        status: request.status === 1223 ? 204 : request.status,
+        statusText: request.status === 1223 ? 'No Content' : request.statusText,
+        headers: responseHeaders,
+        config: config,
+        request: request
+      };
+
+      settle(resolve, reject, response);
+
+      // Clean up request
+      request = null;
+    };
+
+    // Handle low level network errors
+    request.onerror = function handleError() {
+      // Real errors are hidden from us by the browser
+      // onerror should only fire if it's a network error
+      reject(createError('Network Error', config));
+
+      // Clean up request
+      request = null;
+    };
+
+    // Handle timeout
+    request.ontimeout = function handleTimeout() {
+      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED'));
+
+      // Clean up request
+      request = null;
+    };
+
+    // Add xsrf header
+    // This is only done if running in a standard browser environment.
+    // Specifically not if we're in a web worker, or react-native.
+    if (utils.isStandardBrowserEnv()) {
+      var cookies = __webpack_require__(24);
+
+      // Add xsrf header
+      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
+          cookies.read(config.xsrfCookieName) :
+          undefined;
+
+      if (xsrfValue) {
+        requestHeaders[config.xsrfHeaderName] = xsrfValue;
+      }
+    }
+
+    // Add headers to the request
+    if ('setRequestHeader' in request) {
+      utils.forEach(requestHeaders, function setRequestHeader(val, key) {
+        if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
+          // Remove Content-Type if data is undefined
+          delete requestHeaders[key];
+        } else {
+          // Otherwise add header to the request
+          request.setRequestHeader(key, val);
+        }
+      });
+    }
+
+    // Add withCredentials to request if needed
+    if (config.withCredentials) {
+      request.withCredentials = true;
+    }
+
+    // Add responseType to request if needed
+    if (config.responseType) {
+      try {
+        request.responseType = config.responseType;
+      } catch (e) {
+        if (request.responseType !== 'json') {
+          throw e;
+        }
+      }
+    }
+
+    // Handle progress if needed
+    if (typeof config.onDownloadProgress === 'function') {
+      request.addEventListener('progress', config.onDownloadProgress);
+    }
+
+    // Not all browsers support upload events
+    if (typeof config.onUploadProgress === 'function' && request.upload) {
+      request.upload.addEventListener('progress', config.onUploadProgress);
+    }
+
+    if (config.cancelToken) {
+      // Handle cancellation
+      config.cancelToken.promise.then(function onCanceled(cancel) {
+        if (!request) {
+          return;
+        }
+
+        request.abort();
+        reject(cancel);
+        // Clean up request
+        request = null;
+      });
+    }
+
+    if (requestData === undefined) {
+      requestData = null;
+    }
+
+    // Send the request
+    request.send(requestData);
+  });
+};
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * A `Cancel` is an object that is thrown when an operation is canceled.
+ *
+ * @class
+ * @param {string=} message The message.
+ */
+function Cancel(message) {
+  this.message = message;
+}
+
+Cancel.prototype.toString = function toString() {
+  return 'Cancel' + (this.message ? ': ' + this.message : '');
+};
+
+Cancel.prototype.__CANCEL__ = true;
+
+module.exports = Cancel;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function isCancel(value) {
+  return !!(value && value.__CANCEL__);
+};
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var enhanceError = __webpack_require__(18);
+
+/**
+ * Create an Error with the specified message, config, error code, and response.
+ *
+ * @param {string} message The error message.
+ * @param {Object} config The config.
+ * @param {string} [code] The error code (for example, 'ECONNABORTED').
+ @ @param {Object} [response] The response.
+ * @returns {Error} The created error.
+ */
+module.exports = function createError(message, config, code, response) {
+  var error = new Error(message);
+  return enhanceError(error, config, code, response);
+};
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function bind(fn, thisArg) {
+  return function wrap() {
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i];
+    }
+    return fn.apply(thisArg, args);
+  };
+};
+
+
+/***/ }),
 /* 9 */
+/***/ (function(module, exports) {
+
+var toast = function toast(msg, type, position) {
+  notif({
+    msg: msg,
+    type: type,
+    position: position
+  });
+};
+
+module.exports = { toast: toast };
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -11540,20 +11554,20 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__js_admin_admin_js__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__js_admin_user__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__js_admin_admin_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__js_admin_user__ = __webpack_require__(31);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-__webpack_require__(30);
+__webpack_require__(32);
 
 
 /**
@@ -11563,22 +11577,22 @@ __webpack_require__(30);
  */
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var bind = __webpack_require__(7);
-var Axios = __webpack_require__(14);
-var defaults = __webpack_require__(1);
+var bind = __webpack_require__(8);
+var Axios = __webpack_require__(15);
+var defaults = __webpack_require__(2);
 
 /**
  * Create an instance of Axios
@@ -11611,15 +11625,15 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(4);
-axios.CancelToken = __webpack_require__(13);
-axios.isCancel = __webpack_require__(5);
+axios.Cancel = __webpack_require__(5);
+axios.CancelToken = __webpack_require__(14);
+axios.isCancel = __webpack_require__(6);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(28);
+axios.spread = __webpack_require__(29);
 
 module.exports = axios;
 
@@ -11628,13 +11642,13 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Cancel = __webpack_require__(4);
+var Cancel = __webpack_require__(5);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -11692,18 +11706,18 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var defaults = __webpack_require__(1);
+var defaults = __webpack_require__(2);
 var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(15);
-var dispatchRequest = __webpack_require__(16);
-var isAbsoluteURL = __webpack_require__(24);
-var combineURLs = __webpack_require__(22);
+var InterceptorManager = __webpack_require__(16);
+var dispatchRequest = __webpack_require__(17);
+var isAbsoluteURL = __webpack_require__(25);
+var combineURLs = __webpack_require__(23);
 
 /**
  * Create a new instance of Axios
@@ -11784,7 +11798,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11843,16 +11857,16 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var transformData = __webpack_require__(19);
-var isCancel = __webpack_require__(5);
-var defaults = __webpack_require__(1);
+var transformData = __webpack_require__(20);
+var isCancel = __webpack_require__(6);
+var defaults = __webpack_require__(2);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -11929,7 +11943,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11955,13 +11969,13 @@ module.exports = function enhanceError(error, config, code, response) {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var createError = __webpack_require__(6);
+var createError = __webpack_require__(7);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -11987,7 +12001,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12014,7 +12028,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12057,7 +12071,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12132,7 +12146,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12151,7 +12165,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12211,7 +12225,7 @@ module.exports = (
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12232,7 +12246,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12307,7 +12321,7 @@ module.exports = (
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12326,7 +12340,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12370,7 +12384,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12404,18 +12418,18 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* unused harmony export getAdmin */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_jquery__);
 
 
-var toast = __webpack_require__(44);
+var toast = __webpack_require__(9);
 
 var navAdminName = document.querySelector("#navAdminName");
 var adminEditForm = document.querySelector("#editAdmin");
@@ -12507,10 +12521,222 @@ var adminDelete = async function adminDelete() {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_jquery__);
+
+
+var toast = __webpack_require__(9);
+var val = __webpack_require__(33);
+
+var fields = document.querySelectorAll(".createUser");
+var createUserForm = document.querySelector("#createUserForm");
+var closeCreateUserModalBtn = document.querySelector("#closeCreateUserModalBtn");
+var searchUser = document.querySelector("#searchUser");
+var parishSort = document.querySelector("#parishSort");
+var clubSort = document.querySelector("#clubSort");
+var limit = document.querySelector("#limit");
+var limitMax = document.querySelector("#limitMax");
+var allUserCount = document.querySelector("#allUserCount");
+var club = document.querySelector("#club");
+var userDisplayTable = document.querySelector("#userDisplayTable");
+/**
+Event Listeners
+*/
+if (createUserForm) {
+  createUserForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    CreateUser();
+  });
+}
+
+if (searchUser) {
+  searchUser.addEventListener("keyup", function () {
+    SearchUser(searchUser.value.length > 3 ? searchUser.value : "all", parishSort.value, clubSort.value, limit.value);
+  });
+}
+
+if (parishSort) {
+  parishSort.addEventListener("change", function () {
+    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+  });
+}
+
+if (limit) {
+  limit.addEventListener("change", function () {
+    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+  });
+}
+
+if (clubSort) {
+  clubSort.addEventListener("change", function () {
+    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+  });
+}
+
+var CreateUser = async function CreateUser() {
+  var name = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#name").val();
+  var email = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#email").val();
+  var address = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#address").val();
+  var trn = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#trn").val();
+  var phone = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#phone").val();
+  var age = Number(__WEBPACK_IMPORTED_MODULE_1_jquery___default()("#age").val());
+  var parish = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#parish").val();
+  var password = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#password").val();
+  var gender = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#gender").val();
+  var fd = new FormData();
+  if (name.length < 3) {
+    toast.toast("Name is too short it must be at least 3 characters long .", "error", "center");
+  } else if ((await val.IsEmailInUse(email)) == 1) {
+    toast.toast("Email is invalid or in use", "error", "center");
+  } else if (address.length < 5) {
+    toast.toast("Address is too short it must be at least 6 characters long.", "error", "center");
+  } else if (trn.length < 9 || trn.length > 10) {
+    toast.toast("TRN is too short or too long it must be 9 characters long.", "error", "center");
+  } else if (phone.length < 9 || phone.length > 10) {
+    toast.toast("Phone number is too short it must be 9 characters long.", "error", "center");
+  } else if (age < 16) {
+    toast.toast("The member must be at least 16.", "error", "center");
+  } else if (parish.length < 7) {
+    toast.toast("The members parish must be at least 7 characters long.", "error", "center");
+  } else if (password.length < 6) {
+    toast.toast("The members password must be at least 6 characters long.", "error", "center");
+  } else if (gender.length < 4) {
+    toast.toast("The members gender is required.", "error", "center");
+  } else if (club.value == "default") {
+    toast.toast("The members club is required.", "error", "center");
+  } else {
+    fd.append("name", name);
+    fd.append("email", email);
+    fd.append("address", address);
+    fd.append("trn", trn);
+    fd.append("phone", phone);
+    fd.append("age", age);
+    fd.append("parish", parish);
+    fd.append("password", password);
+    fd.append("gender", gender);
+    fd.append("club", club.value);
+    try {
+      var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/create", fd);
+      closeCreateUserModalBtn.click();
+      toast.toast("Member was added to the club successfully", "success", "center");
+      await SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+      fields.forEach(function (f) {
+        return f.value = "";
+      });
+    } catch (err) {
+      throw err;
+    }
+  }
+};
+
+var SearchUser = async function SearchUser() {
+  var search = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "all";
+  var parish = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "all";
+  var club = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "all";
+  var limit = arguments[3];
+
+  var fd = new FormData();
+  fd.append("search", search);
+  try {
+    var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/user/search", fd);
+    var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
+    var clubChoice = clubs.data.filter(function (f) {
+      return f.name === club;
+    })[0] || [];
+    var pSort = res.data.filter(function (p) {
+      return p.parish == parish;
+    });
+    var cSort = res.data.filter(function (c) {
+      return c.club.name == club;
+    });
+    var sorted = [];
+    var userOutPut = "";
+    if (parish != "all") {
+      sorted = cSort.length > 0 || club == "all" ? pSort.slice(0, limit) : [];
+    } else if (club != "all") {
+      sorted = pSort.length > 0 || parish == "all" ? cSort.slice(0, limit) : [];
+    } else if (parish == "all" && club == "all") {
+      sorted = res.data.slice(0, limit);
+    } else {
+      sorted = res.data;
+    }
+
+    var finalSort = parish == "all" || club == "all" ? sorted : sorted.filter(function (c) {
+      return c.club.id == clubChoice.id;
+    }).slice(0, limit) || [];
+
+    if (limitMax) {
+      limitMax.innerHTML = "All Users";
+      limitMax.value = res.data.length;
+    }
+    if (allUserCount) {
+      allUserCount.innerHTML = finalSort.length;
+    }
+    finalSort.forEach(function (f, i) {
+      var created_at = new Date(f.created_at.date);
+      var created = created_at.toString().slice(0, 24);
+      userOutPut += "<tr>\n      <th scope=\"row\">" + i + "</th>\n      <td>" + f.name + "</td>\n      <td>" + f.email + "</td>\n      <td>" + f.gender + "</td>\n      <td>" + f.age + "</td>\n      <td>" + f.phone + "</td>\n      <td>" + f.trn + "</td>\n      <td>" + f.address + "</td>\n      <td>" + f.parish + "</td>\n      <td>" + f.club.name + "</td>\n      <td>" + created + "</td>\n      <td><div class=\"row\">\n     <div class=\"col-sm-6 text-left\"> <a class=\"text-warning editUser\" title=\"Edit " + f.name + "\" id=\"edit" + f.id + "\"><i class=\"fas fa-edit\"></i></a></div>\n      <div class=\"col-sm-6 text-right\"><a class=\"text-danger deleteUser\" title=\"Delete " + f.name + "\" id=\"delete" + f.id + "\"><i class=\"fas fa-trash\"></i></a></div>\n      </div></td>\n    </tr>";
+    });
+    if (userDisplayTable) {
+      userDisplayTable.innerHTML = userOutPut;
+    }
+
+    var editUser = document.querySelectorAll(".editUser");
+    var deleteUser = document.querySelectorAll(".deleteUser");
+    if (deleteUser) {
+      deleteUser.forEach(function (d) {
+        d.addEventListener("click", function () {
+          var id = d.id.substr(6);
+          console.log(id);
+        });
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+var clubDropDownSort = async function clubDropDownSort() {
+  try {
+    var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
+    clubs.data.push({ name: "all", location: "Sort By Club" });
+    var clubOut = "";
+    clubs.data.forEach(function (c) {
+      var name = c.name == "all" ? c.location : c.name;
+      var selected = c.name == "all" ? "selected" : "";
+      clubOut += "<option value=\"" + c.name + "\" " + selected + ">" + name + "</option>";
+    });
+    clubSort.innerHTML = clubOut;
+  } catch (err) {}
+};
+
+var clubDropDownCreate = async function clubDropDownCreate() {
+  var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
+  clubs.data.push({ name: "default", location: "Member Club" });
+  var clubOut = "";
+  clubs.data.forEach(function (c) {
+    var name = c.name == "default" ? c.location : c.name;
+    var selected = c.name == "default" ? "selected" : "";
+    clubOut += "<option value=\"" + c.name + "\" " + selected + ">" + name + "</option>";
+  });
+  club.innerHTML = clubOut;
+};
+
+clubDropDownCreate();
+clubDropDownSort();
+SearchUser();
+
+/***/ }),
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
-window._ = __webpack_require__(31);
+window._ = __webpack_require__(34);
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -12518,7 +12744,7 @@ window._ = __webpack_require__(31);
  * code may be modified to fit the specific needs of your application.
  */
 
-window.$ = window.jQuery = __webpack_require__(8);
+window.$ = window.jQuery = __webpack_require__(3);
 
 /**
  * Vue is a modern JavaScript library for building interactive web interfaces
@@ -12532,7 +12758,7 @@ window.$ = window.jQuery = __webpack_require__(8);
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = __webpack_require__(2);
+window.axios = __webpack_require__(1);
 
 window.axios.defaults.headers.common = {
   "X-CSRF-TOKEN": window.Laravel.csrfToken,
@@ -12553,7 +12779,37 @@ window.axios.defaults.headers.common = {
 // });
 
 /***/ }),
-/* 31 */
+/* 33 */
+/***/ (function(module, exports) {
+
+var validateEmail = function validateEmail(email) {
+  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+};
+
+var IsEmailInUse = async function IsEmailInUse(email) {
+  var fd = new FormData();
+  if (!validateEmail(email)) {
+    return 1;
+  } else {
+    try {
+      fd.append("email", email);
+      var res = await axios.post("/admin/user/emailCheck", fd);
+      if (res.data.status == 0) {
+        return 0;
+      } else {
+        return 1;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+};
+
+module.exports = { validateEmail: validateEmail, IsEmailInUse: IsEmailInUse };
+
+/***/ }),
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -29670,10 +29926,10 @@ window.axios.defaults.headers.common = {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(32), __webpack_require__(33)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(35), __webpack_require__(36)(module)))
 
 /***/ }),
-/* 32 */
+/* 35 */
 /***/ (function(module, exports) {
 
 var g;
@@ -29700,7 +29956,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 33 */
+/* 36 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -29728,266 +29984,12 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(10);
-module.exports = __webpack_require__(11);
+__webpack_require__(11);
+module.exports = __webpack_require__(12);
 
-
-/***/ }),
-/* 35 */,
-/* 36 */,
-/* 37 */,
-/* 38 */,
-/* 39 */,
-/* 40 */,
-/* 41 */,
-/* 42 */,
-/* 43 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_jquery__);
-
-
-var toast = __webpack_require__(44);
-var val = __webpack_require__(45);
-
-var fields = document.querySelectorAll(".createUser");
-var createUserForm = document.querySelector("#createUserForm");
-var closeCreateUserModalBtn = document.querySelector("#closeCreateUserModalBtn");
-var searchUser = document.querySelector("#searchUser");
-var parishSort = document.querySelector("#parishSort");
-var clubSort = document.querySelector("#clubSort");
-var limit = document.querySelector("#limit");
-var limitMax = document.querySelector("#limitMax");
-var allUserCount = document.querySelector("#allUserCount");
-var club = document.querySelector("#club");
-var userDisplayTable = document.querySelector("#userDisplayTable");
-/**
-Event Listeners
-*/
-if (createUserForm) {
-  createUserForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    CreateUser();
-  });
-}
-
-if (searchUser) {
-  searchUser.addEventListener("keyup", function () {
-    SearchUser(searchUser.value.length > 3 ? searchUser.value : "all", parishSort.value, clubSort.value, limit.value);
-  });
-}
-
-if (parishSort) {
-  parishSort.addEventListener("change", function () {
-    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
-  });
-}
-
-if (limit) {
-  limit.addEventListener("change", function () {
-    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
-  });
-}
-
-if (clubSort) {
-  clubSort.addEventListener("change", function () {
-    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
-  });
-}
-
-var CreateUser = async function CreateUser() {
-  var name = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#name").val();
-  var email = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#email").val();
-  var address = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#address").val();
-  var trn = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#trn").val();
-  var phone = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#phone").val();
-  var age = Number(__WEBPACK_IMPORTED_MODULE_1_jquery___default()("#age").val());
-  var parish = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#parish").val();
-  var password = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#password").val();
-  var gender = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#gender").val();
-  var fd = new FormData();
-  if (name.length < 3) {
-    toast.toast("Name is too short it must be at least 3 characters long .", "error", "center");
-  } else if ((await val.IsEmailInUse(email)) == 1) {
-    toast.toast("Email is invalid or in use", "error", "center");
-  } else if (address.length < 5) {
-    toast.toast("Address is too short it must be at least 6 characters long.", "error", "center");
-  } else if (trn.length < 9 || trn.length > 10) {
-    toast.toast("TRN is too short or too long it must be 9 characters long.", "error", "center");
-  } else if (phone.length < 9 || phone.length > 10) {
-    toast.toast("Phone number is too short it must be 9 characters long.", "error", "center");
-  } else if (age < 16) {
-    toast.toast("The member must be at least 16.", "error", "center");
-  } else if (parish.length < 7) {
-    toast.toast("The members parish must be at least 7 characters long.", "error", "center");
-  } else if (password.length < 6) {
-    toast.toast("The members password must be at least 6 characters long.", "error", "center");
-  } else if (gender.length < 4) {
-    toast.toast("The members gender is required.", "error", "center");
-  } else if (club.value == "default") {
-    toast.toast("The members club is required.", "error", "center");
-  } else {
-    fd.append("name", name);
-    fd.append("email", email);
-    fd.append("address", address);
-    fd.append("trn", trn);
-    fd.append("phone", phone);
-    fd.append("age", age);
-    fd.append("parish", parish);
-    fd.append("password", password);
-    fd.append("gender", gender);
-    fd.append("club", club.value);
-    try {
-      var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/create", fd);
-      closeCreateUserModalBtn.click();
-      toast.toast("Member was added to the club successfully", "success", "center");
-      await SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
-      fields.forEach(function (f) {
-        return f.value = "";
-      });
-    } catch (err) {
-      throw err;
-    }
-  }
-};
-
-var SearchUser = async function SearchUser() {
-  var search = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "all";
-  var parish = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "all";
-  var club = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "all";
-  var limit = arguments[3];
-
-  var fd = new FormData();
-  fd.append("search", search);
-  try {
-    var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/user/search", fd);
-    var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
-    var clubChoice = clubs.data.filter(function (f) {
-      return f.name === club;
-    })[0] || [];
-    var pSort = res.data.filter(function (p) {
-      return p.parish == parish;
-    });
-    var cSort = res.data.filter(function (c) {
-      return c.club.name == club;
-    });
-    var sorted = [];
-    var userOutPut = "";
-    if (parish != "all") {
-      sorted = cSort.length > 0 || club == "all" ? pSort.slice(0, limit) : [];
-    } else if (club != "all") {
-      sorted = pSort.length > 0 || parish == "all" ? cSort.slice(0, limit) : [];
-    } else if (parish == "all" && club == "all") {
-      sorted = res.data.slice(0, limit);
-    } else {
-      sorted = res.data;
-    }
-
-    var finalSort = parish == "all" || club == "all" ? sorted : sorted.filter(function (c) {
-      return c.club.id == clubChoice.id;
-    }).slice(0, limit) || [];
-
-    if (limitMax) {
-      limitMax.innerHTML = "All Users";
-      limitMax.value = res.data.length;
-    }
-    if (allUserCount) {
-      allUserCount.innerHTML = finalSort.length;
-    }
-    finalSort.forEach(function (f, i) {
-      console.log(f.created_at);
-      var created_at = new Date(f.created_at.date);
-      var created = created_at.toString().slice(0, 24);
-      userOutPut += "<tr>\n      <th scope=\"row\">" + i + "</th>\n      <td>" + f.name + "</td>\n      <td>" + f.email + "</td>\n      <td>" + f.gender + "</td>\n      <td>" + f.age + "</td>\n      <td>" + f.phone + "</td>\n      <td>" + f.trn + "</td>\n      <td>" + f.address + "</td>\n      <td>" + f.parish + "</td>\n      <td>" + f.club.name + "</td>\n      <td>" + created + "</td>\n      <td><div class=\"row\">\n     <div class=\"col-sm-6 text-left\"> <a class=\"text-warning editUser\" title=\"Edit " + f.name + "\" id=\"edit" + f.id + "\"><i class=\"fas fa-edit\"></i></a></div>\n      <div class=\"col-sm-6 text-right\"><a class=\"text-danger deleteUser\" title=\"Delete " + f.name + "\" id=\"delete" + f.id + "\"><i class=\"fas fa-trash\"></i></a></div>\n      </div></td>\n    </tr>";
-    });
-    if (userDisplayTable) {
-      userDisplayTable.innerHTML = userOutPut;
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-var clubDropDownSort = async function clubDropDownSort() {
-  try {
-    var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
-    clubs.data.push({ name: "all", location: "Sort By Club" });
-    var clubOut = "";
-    clubs.data.forEach(function (c) {
-      var name = c.name == "all" ? c.location : c.name;
-      var selected = c.name == "all" ? "selected" : "";
-      clubOut += "<option value=\"" + c.name + "\" " + selected + ">" + name + "</option>";
-    });
-    clubSort.innerHTML = clubOut;
-  } catch (err) {}
-};
-
-var clubDropDownCreate = async function clubDropDownCreate() {
-  var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
-  clubs.data.push({ name: "default", location: "Member Club" });
-  var clubOut = "";
-  clubs.data.forEach(function (c) {
-    var name = c.name == "default" ? c.location : c.name;
-    var selected = c.name == "default" ? "selected" : "";
-    clubOut += "<option value=\"" + c.name + "\" " + selected + ">" + name + "</option>";
-  });
-  club.innerHTML = clubOut;
-};
-
-clubDropDownCreate();
-clubDropDownSort();
-SearchUser();
-
-/***/ }),
-/* 44 */
-/***/ (function(module, exports) {
-
-var toast = function toast(msg, type, position) {
-  notif({
-    msg: msg,
-    type: type,
-    position: position
-  });
-};
-
-module.exports = { toast: toast };
-
-/***/ }),
-/* 45 */
-/***/ (function(module, exports) {
-
-var validateEmail = function validateEmail(email) {
-  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(email);
-};
-
-var IsEmailInUse = async function IsEmailInUse(email) {
-  var fd = new FormData();
-  if (!validateEmail(email)) {
-    return 1;
-  } else {
-    try {
-      fd.append("email", email);
-      var res = await axios.post("/admin/user/emailCheck", fd);
-      if (res.data.status == 0) {
-        return 0;
-      } else {
-        return 1;
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-};
-
-module.exports = { validateEmail: validateEmail, IsEmailInUse: IsEmailInUse };
 
 /***/ })
 /******/ ]);

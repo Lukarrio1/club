@@ -15,16 +15,16 @@
                 />
               </div>
             </div>
-            <div class="col-sm-1 mt-4 ">
+            <div class="col-sm-1 mt-4 text-center ">
               <span class="badge badge-info" id="allUserCount">0</span>
             </div>
             <div class="col-sm-2 mt-4 text-left">
               <a
                 href=""
-                class=""
+                class="btn btn-sm btn-rounded btn-outline-info"
                 data-toggle="modal"
                 data-target="#modalContactForm"
-                ><i class="fas fa-plus text-success"></i> Member</a
+                ><i class="fas fa-plus text-info"></i> Member</a
               >
             </div>
           </div>
@@ -88,9 +88,9 @@
         </div>
         <div class="card-body">
           <div class="table-responsive">
-            <table class="table">
+            <table class="table table-bordered">
               <thead>
-                <tr>
+                <tr class="text-center">
                   <th scope="col">#</th>
                   <th scope="col">Name</th>
                   <th scope="col">Email</th>
@@ -106,30 +106,6 @@
                 </tr>
               </thead>
               <tbody id="userDisplayTable">
-          
-                <tr>
-                  <th scope="row">2</th>
-            
-                  <td>Cell</td>
-                  <td>Cell</td>
-                  <td>Cell</td>
-                  <td>Cell</td>
-                  <td>Cell</td>
-                  <td>Cell</td>
-                  <td>Cell</td>
-                </tr>
-                <tr>
-                  <th scope="row">3</th>
-                  <td>Cell</td>
-                  <td>Cell</td>
-                  <td>Cell</td>
-                  <td>Cell</td>
-                  <td>Cell</td>
-                  <td>Cell</td>
-                  <td>Cell</td>
-                  <td>Cell</td>
-                  <td>Cell</td>
-                </tr>
               </tbody>
             </table>
           </div>
@@ -148,7 +124,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header text-center bg-info text-white">
-          <h4 class="modal-title w-100 font-weight-bold">Write to us</h4>
+          <h4 class="modal-title w-100 font-weight-bold">Add Member</h4>
           <button
             type="button"
             class="close"

@@ -181,7 +181,6 @@ var SearchUser = async (
       allUserCount.innerHTML = finalSort.length;
     }
     finalSort.forEach((f, i) => {
-      console.log(f.created_at);
       let created_at = new Date(f.created_at.date);
       let created = created_at.toString().slice(0, 24);
       userOutPut += `<tr>
@@ -204,6 +203,17 @@ var SearchUser = async (
     });
     if (userDisplayTable) {
       userDisplayTable.innerHTML = userOutPut;
+    }
+
+    let editUser = document.querySelectorAll(".editUser");
+    let deleteUser = document.querySelectorAll(".deleteUser");
+    if (deleteUser) {
+      deleteUser.forEach(d => {
+        d.addEventListener("click", () => {
+          let id = d.id.substr(6);
+          console.log(id);
+        });
+      });
     }
   } catch (err) {
     console.log(err);
