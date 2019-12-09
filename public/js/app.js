@@ -29767,6 +29767,7 @@ var limit = document.querySelector("#limit");
 var limitMax = document.querySelector("#limitMax");
 var allUserCount = document.querySelector("#allUserCount");
 var club = document.querySelector("#club");
+var userDisplayTable = document.querySelector("#userDisplayTable");
 /**
 Event Listeners
 */
@@ -29870,7 +29871,7 @@ var SearchUser = async function SearchUser() {
     var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
     var clubChoice = clubs.data.filter(function (f) {
       return f.name === club;
-    })[0];
+    })[0] || [];
     var pSort = res.data.filter(function (p) {
       return p.parish == parish;
     });
@@ -29878,6 +29879,7 @@ var SearchUser = async function SearchUser() {
       return c.club.name == club;
     });
     var sorted = [];
+    var userOutPut = "";
     if (parish != "all") {
       sorted = cSort.length > 0 || club == "all" ? pSort.slice(0, limit) : [];
     } else if (club != "all") {
@@ -29897,9 +29899,17 @@ var SearchUser = async function SearchUser() {
       limitMax.value = res.data.length;
     }
     if (allUserCount) {
-      allUserCount.innerHTML = sorted.length;
+      allUserCount.innerHTML = finalSort.length;
     }
-    console.log(finalSort);
+    finalSort.forEach(function (f, i) {
+      console.log(f.created_at);
+      var created_at = new Date(f.created_at.date);
+      var created = created_at.toString().slice(0, 24);
+      userOutPut += "<tr>\n      <th scope=\"row\">" + i + "</th>\n      <td>" + f.name + "</td>\n      <td>" + f.email + "</td>\n      <td>" + f.gender + "</td>\n      <td>" + f.age + "</td>\n      <td>" + f.phone + "</td>\n      <td>" + f.trn + "</td>\n      <td>" + f.address + "</td>\n      <td>" + f.parish + "</td>\n      <td>" + f.club.name + "</td>\n      <td>" + created + "</td>\n      <td><div class=\"row\">\n     <div class=\"col-sm-6 text-left\"> <a class=\"text-warning editUser\" title=\"Edit " + f.name + "\" id=\"edit" + f.id + "\"><i class=\"fas fa-edit\"></i></a></div>\n      <div class=\"col-sm-6 text-right\"><a class=\"text-danger deleteUser\" title=\"Delete " + f.name + "\" id=\"delete" + f.id + "\"><i class=\"fas fa-trash\"></i></a></div>\n      </div></td>\n    </tr>";
+    });
+    if (userDisplayTable) {
+      userDisplayTable.innerHTML = userOutPut;
+    }
   } catch (err) {
     console.log(err);
   }

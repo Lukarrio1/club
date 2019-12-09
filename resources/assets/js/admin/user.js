@@ -15,6 +15,7 @@ var limit = document.querySelector("#limit");
 var limitMax = document.querySelector("#limitMax");
 var allUserCount = document.querySelector("#allUserCount");
 var club = document.querySelector("#club");
+var userDisplayTable = document.querySelector("#userDisplayTable");
 /**
 Event Listeners
 */
@@ -152,10 +153,11 @@ var SearchUser = async (
   try {
     let res = await axios.post("/admin/user/search", fd);
     let clubs = await axios.get("/admin/clubs");
-    let clubChoice = clubs.data.filter(f => f.name === club)[0];
+    let clubChoice = clubs.data.filter(f => f.name === club)[0] || [];
     let pSort = res.data.filter(p => p.parish == parish);
     let cSort = res.data.filter(c => c.club.name == club);
     let sorted = [];
+    let userOutPut = "";
     if (parish != "all") {
       sorted = cSort.length > 0 || club == "all" ? pSort.slice(0, limit) : [];
     } else if (club != "all") {
@@ -176,9 +178,33 @@ var SearchUser = async (
       limitMax.value = res.data.length;
     }
     if (allUserCount) {
-      allUserCount.innerHTML = sorted.length;
+      allUserCount.innerHTML = finalSort.length;
     }
-    console.log(finalSort);
+    finalSort.forEach((f, i) => {
+      console.log(f.created_at);
+      let created_at = new Date(f.created_at.date);
+      let created = created_at.toString().slice(0, 24);
+      userOutPut += `<tr>
+      <th scope="row">${i}</th>
+      <td>${f.name}</td>
+      <td>${f.email}</td>
+      <td>${f.gender}</td>
+      <td>${f.age}</td>
+      <td>${f.phone}</td>
+      <td>${f.trn}</td>
+      <td>${f.address}</td>
+      <td>${f.parish}</td>
+      <td>${f.club.name}</td>
+      <td>${created}</td>
+      <td><div class="row">
+     <div class="col-sm-6 text-left"> <a class="text-warning editUser" title="Edit ${f.name}" id="edit${f.id}"><i class="fas fa-edit"></i></a></div>
+      <div class="col-sm-6 text-right"><a class="text-danger deleteUser" title="Delete ${f.name}" id="delete${f.id}"><i class="fas fa-trash"></i></a></div>
+      </div></td>
+    </tr>`;
+    });
+    if (userDisplayTable) {
+      userDisplayTable.innerHTML = userOutPut;
+    }
   } catch (err) {
     console.log(err);
   }

@@ -97,6 +97,7 @@ class UserController extends Controller
                 'gender' => $user->gender,
                 'club' => $club,
                 'parish' => $user->parish,
+                'created_at' => $user->created_at,
             ];
         }
         return $users;

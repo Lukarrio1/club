@@ -14,7 +14,6 @@ class ClubController extends Controller
 
     public function index()
     {
-        $this->dummyClub();
         return Club::all();
     }
 

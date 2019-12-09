@@ -1,7 +1,7 @@
 @extends('layouts.admin') @section('content')
-<div class="container">
+<div class="container-fuild">
   <div class="row">
-    <div class="col-sm-12 mt-5">
+    <div class="col-sm-12 mt-3">
       <div class="card">
         <div class="card-header bg-white">
           <div class="row">
@@ -87,51 +87,52 @@
           </div>
         </div>
         <div class="card-body">
-          <table
-            id="dtBasicExample"
-            class="table table-striped table-bordered table-sm"
-            cellspacing="0"
-            width="100%"
-          >
-            <thead>
-              <tr>
-                <th class="th-sm">Name</th>
-                <th class="th-sm">Position</th>
-                <th class="th-sm">Office</th>
-                <th class="th-sm">Age</th>
-                <th class="th-sm">Start date</th>
-                <th class="th-sm">Salary</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Michael Bruce</td>
-                <td>Javascript Developer</td>
-                <td>Singapore</td>
-                <td>29</td>
-                <td>2011/06/27</td>
-                <td>$183,000</td>
-              </tr>
-              <tr>
-                <td>Donna Snider</td>
-                <td>Customer Support</td>
-                <td>New York</td>
-                <td>27</td>
-                <td>2011/01/25</td>
-                <td>$112,000</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Age</th>
-                <th>Start date</th>
-                <th>Salary</th>
-              </tr>
-            </tfoot>
-          </table>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Gender</th>
+                  <th scope="col">Age</th>
+                  <th scope="col">Telephone</th>
+                  <th scope="col">TRN</th>
+                  <th scope="col">Address</th>
+                  <th scope="col">Parish</th>
+                  <th scope="col">Club</th>
+                  <th scope="col">Joined</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="userDisplayTable">
+          
+                <tr>
+                  <th scope="row">2</th>
+            
+                  <td>Cell</td>
+                  <td>Cell</td>
+                  <td>Cell</td>
+                  <td>Cell</td>
+                  <td>Cell</td>
+                  <td>Cell</td>
+                  <td>Cell</td>
+                </tr>
+                <tr>
+                  <th scope="row">3</th>
+                  <td>Cell</td>
+                  <td>Cell</td>
+                  <td>Cell</td>
+                  <td>Cell</td>
+                  <td>Cell</td>
+                  <td>Cell</td>
+                  <td>Cell</td>
+                  <td>Cell</td>
+                  <td>Cell</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
