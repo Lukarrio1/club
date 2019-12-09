@@ -29,12 +29,16 @@ Route::prefix('admin')->group(function () {
     Route::get('/edit', 'AdminController@edit')->name('admin.edit');
     Route::post('/edit', 'AdminController@update');
     Route::delete('/delete', 'AdminController@deleteUser');
+
     // user routes
     Route::get('/users', 'Admin\UserController@userPage')->name('admin.users');
     Route::post('/user/emailCheck', 'Admin\UserController@emailCheck');
     Route::post('/create', 'Admin\UserController@store');
     Route::post('/user/search', 'Admin\UserController@searchUser');
+
+    //clubs routes
     Route::get('/clubs', 'Admin\ClubController@index');
+    Route::get('/clubsPage', 'Admin\ClubController@clubPage')->name('admin.clubs');
 
     // Password reset routes
     Route::post('/password/email', 'Auth\AdminForgotPasswordController@sendResetLinkEmail')->name('admin.password.email');

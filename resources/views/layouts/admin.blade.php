@@ -30,6 +30,15 @@
           'csrfToken' => csrf_token(),
       ]) !!};
     </script>
+    <style>
+    
+    .modal-notify .modal-header {
+    border-radius: 3px 3px 0 0;
+      }
+    .modal-notify .modal-content {
+    border-radius: 3px;
+}
+    </style>
   </head>
   <body class="fixed-sn white-skin">
     <div id="app">
