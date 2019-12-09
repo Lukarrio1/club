@@ -13,6 +13,8 @@ var parishSort = document.querySelector("#parishSort");
 var clubSort = document.querySelector("#clubSort");
 var limit = document.querySelector("#limit");
 var limitMax = document.querySelector("#limitMax");
+var allUserCount = document.querySelector("#allUserCount");
+var club = document.querySelector("#club");
 /**
 Event Listeners
 */
@@ -37,7 +39,6 @@ if (searchUser) {
 if (parishSort) {
   parishSort.addEventListener("change", () => {
     SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
-    console.log(parishSort.value);
   });
 }
 
@@ -105,7 +106,9 @@ var CreateUser = async () => {
       "center"
     );
   } else if (gender.length < 4) {
-    toast.toast("The members is required.", "error", "center");
+    toast.toast("The members gender is required.", "error", "center");
+  } else if (club.value == "default") {
+    toast.toast("The members club is required.", "error", "center");
   } else {
     fd.append("name", name);
     fd.append("email", email);
@@ -116,6 +119,7 @@ var CreateUser = async () => {
     fd.append("parish", parish);
     fd.append("password", password);
     fd.append("gender", gender);
+    fd.append("club", club.value);
     try {
       let res = await axios.post("/admin/create", fd);
       closeCreateUserModalBtn.click();
@@ -123,6 +127,12 @@ var CreateUser = async () => {
         "Member was added to the club successfully",
         "success",
         "center"
+      );
+      await SearchUser(
+        searchUser.value,
+        parishSort.value,
+        clubSort.value,
+        limit.value
       );
       fields.forEach(f => (f.value = ""));
     } catch (err) {
@@ -141,32 +151,40 @@ var SearchUser = async (
   fd.append("search", search);
   try {
     let res = await axios.post("/admin/user/search", fd);
+    let clubs = await axios.get("/admin/clubs");
+    let clubChoice = clubs.data.filter(f => f.name === club)[0];
     let pSort = res.data.filter(p => p.parish == parish);
     let cSort = res.data.filter(c => c.club.name == club);
-    let result = [];
+    let sorted = [];
     if (parish != "all") {
-      result = cSort.length > 0 || club == "all" ? pSort.slice(0, limit) : [];
+      sorted = cSort.length > 0 || club == "all" ? pSort.slice(0, limit) : [];
     } else if (club != "all") {
-      result = pSort.length > 0 || parish == "all" ? cSort.slice(0, limit) : [];
+      sorted = pSort.length > 0 || parish == "all" ? cSort.slice(0, limit) : [];
     } else if (parish == "all" && club == "all") {
-      result = res.data.slice(0, limit);
+      sorted = res.data.slice(0, limit);
     } else {
-      result = res.data;
+      sorted = res.data;
     }
+
+    let finalSort =
+      parish == "all" || club == "all"
+        ? sorted
+        : sorted.filter(c => c.club.id == clubChoice.id).slice(0, limit) || [];
+
     if (limitMax) {
       limitMax.innerHTML = "All Users";
       limitMax.value = res.data.length;
     }
-    console.table(result);
-    result.forEach(r => {
-      console.log(r.club);
-    });
+    if (allUserCount) {
+      allUserCount.innerHTML = sorted.length;
+    }
+    console.log(finalSort);
   } catch (err) {
     console.log(err);
   }
 };
 
-var clubDropDown = async () => {
+var clubDropDownSort = async () => {
   try {
     let clubs = await axios.get("/admin/clubs");
     clubs.data.push({ name: "all", location: "Sort By Club" });
@@ -180,5 +198,18 @@ var clubDropDown = async () => {
   } catch (err) {}
 };
 
-clubDropDown();
+var clubDropDownCreate = async () => {
+  let clubs = await axios.get("/admin/clubs");
+  clubs.data.push({ name: "default", location: "Member Club" });
+  let clubOut = "";
+  clubs.data.forEach(c => {
+    let name = c.name == "default" ? c.location : c.name;
+    let selected = c.name == "default" ? "selected" : "";
+    clubOut += `<option value="${c.name}" ${selected}>${name}</option>`;
+  });
+  club.innerHTML = clubOut;
+};
+
+clubDropDownCreate();
+clubDropDownSort();
 SearchUser();

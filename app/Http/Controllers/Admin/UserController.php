@@ -52,6 +52,7 @@ class UserController extends Controller
         $phone = htmlentities($request->phone);
         $parish = htmlentities($request->parish);
         $age = htmlentities($request->age);
+        $club = Club::where('name', $request->club)->first();
         $password = Hash::make(htmlentities($request->password));
         $gender = htmlentities($request->gender);
         $store->name = $name;
@@ -63,7 +64,7 @@ class UserController extends Controller
         $store->age = $age;
         $store->password = $password;
         $store->gender = $gender;
-        $store->club_id = 1;
+        $store->club_id = $club->id;
         $store->save();
         // $this->newUSer(new newUser($name, $request->password));
         return ['status' => 200];

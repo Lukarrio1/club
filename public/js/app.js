@@ -29765,6 +29765,8 @@ var parishSort = document.querySelector("#parishSort");
 var clubSort = document.querySelector("#clubSort");
 var limit = document.querySelector("#limit");
 var limitMax = document.querySelector("#limitMax");
+var allUserCount = document.querySelector("#allUserCount");
+var club = document.querySelector("#club");
 /**
 Event Listeners
 */
@@ -29784,7 +29786,6 @@ if (searchUser) {
 if (parishSort) {
   parishSort.addEventListener("change", function () {
     SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
-    console.log(parishSort.value);
   });
 }
 
@@ -29828,7 +29829,9 @@ var CreateUser = async function CreateUser() {
   } else if (password.length < 6) {
     toast.toast("The members password must be at least 6 characters long.", "error", "center");
   } else if (gender.length < 4) {
-    toast.toast("The members is required.", "error", "center");
+    toast.toast("The members gender is required.", "error", "center");
+  } else if (club.value == "default") {
+    toast.toast("The members club is required.", "error", "center");
   } else {
     fd.append("name", name);
     fd.append("email", email);
@@ -29839,10 +29842,12 @@ var CreateUser = async function CreateUser() {
     fd.append("parish", parish);
     fd.append("password", password);
     fd.append("gender", gender);
+    fd.append("club", club.value);
     try {
       var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/create", fd);
       closeCreateUserModalBtn.click();
       toast.toast("Member was added to the club successfully", "success", "center");
+      await SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
       fields.forEach(function (f) {
         return f.value = "";
       });
@@ -29862,36 +29867,45 @@ var SearchUser = async function SearchUser() {
   fd.append("search", search);
   try {
     var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/user/search", fd);
+    var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
+    var clubChoice = clubs.data.filter(function (f) {
+      return f.name === club;
+    })[0];
     var pSort = res.data.filter(function (p) {
       return p.parish == parish;
     });
     var cSort = res.data.filter(function (c) {
       return c.club.name == club;
     });
-    var result = [];
+    var sorted = [];
     if (parish != "all") {
-      result = cSort.length > 0 || club == "all" ? pSort.slice(0, limit) : [];
+      sorted = cSort.length > 0 || club == "all" ? pSort.slice(0, limit) : [];
     } else if (club != "all") {
-      result = pSort.length > 0 || parish == "all" ? cSort.slice(0, limit) : [];
+      sorted = pSort.length > 0 || parish == "all" ? cSort.slice(0, limit) : [];
     } else if (parish == "all" && club == "all") {
-      result = res.data.slice(0, limit);
+      sorted = res.data.slice(0, limit);
     } else {
-      result = res.data;
+      sorted = res.data;
     }
+
+    var finalSort = parish == "all" || club == "all" ? sorted : sorted.filter(function (c) {
+      return c.club.id == clubChoice.id;
+    }).slice(0, limit) || [];
+
     if (limitMax) {
       limitMax.innerHTML = "All Users";
       limitMax.value = res.data.length;
     }
-    console.table(result);
-    result.forEach(function (r) {
-      console.log(r.club);
-    });
+    if (allUserCount) {
+      allUserCount.innerHTML = sorted.length;
+    }
+    console.log(finalSort);
   } catch (err) {
     console.log(err);
   }
 };
 
-var clubDropDown = async function clubDropDown() {
+var clubDropDownSort = async function clubDropDownSort() {
   try {
     var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
     clubs.data.push({ name: "all", location: "Sort By Club" });
@@ -29905,7 +29919,20 @@ var clubDropDown = async function clubDropDown() {
   } catch (err) {}
 };
 
-clubDropDown();
+var clubDropDownCreate = async function clubDropDownCreate() {
+  var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
+  clubs.data.push({ name: "default", location: "Member Club" });
+  var clubOut = "";
+  clubs.data.forEach(function (c) {
+    var name = c.name == "default" ? c.location : c.name;
+    var selected = c.name == "default" ? "selected" : "";
+    clubOut += "<option value=\"" + c.name + "\" " + selected + ">" + name + "</option>";
+  });
+  club.innerHTML = clubOut;
+};
+
+clubDropDownCreate();
+clubDropDownSort();
 SearchUser();
 
 /***/ }),

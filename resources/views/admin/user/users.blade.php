@@ -16,7 +16,7 @@
               </div>
             </div>
             <div class="col-sm-1 mt-4 ">
-              <span class="badge badge-info" id="allUserCount">30</span>
+              <span class="badge badge-info" id="allUserCount">0</span>
             </div>
             <div class="col-sm-2 mt-4 text-left">
               <a
@@ -263,11 +263,6 @@
             name="club"
             >
             <option selected disabled class="grey-text">Member Club</option>
-            <option value="20">20</option>
-            <option value="40">40</option>
-            <option value="80">80</option>
-            <option value="100">100</option>
-            <option value="200">200</option>
           </select>
         </div>
         <div class="md-form mb-5">
