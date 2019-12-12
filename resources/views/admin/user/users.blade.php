@@ -24,6 +24,7 @@
                 class="btn btn-sm btn-rounded btn-outline-info"
                 data-toggle="modal"
                 data-target="#modalContactForm"
+                id="editCreateModal"
                 ><i class="fas fa-plus text-info"></i> Member</a
               >
             </div>
@@ -123,8 +124,8 @@
   >
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <div class="modal-header text-center bg-info text-white">
-          <h4 class="modal-title w-100 font-weight-bold">Add Member</h4>
+        <div class="modal-header text-center bg-info text-white" id="editModalHeaderColor">
+          <h4 class="modal-title w-100 font-weight-bold" id="editModalHeader">Add Member</h4>
           <button
             type="button"
             class="close"
@@ -171,7 +172,7 @@
             </div>
           <div class="md-form mb-5">
             <select
-                class="mdb-select md-form colorful-select dropdown-success"
+                class="mdb-select md-form colorful-select dropdown-success createUser"
                 data-val="true"
                 id="parish"
                 name="parish"
@@ -253,7 +254,7 @@
               />
             </div>
         <div class="modal-footer d-flex justify-content-center">
-          <button class="btn btn-success">
+          <button class="btn btn-success" id="editModalSubmitBtn">
             <i class="fas fa-plus"></i> CREATE
           </button>
         </div>

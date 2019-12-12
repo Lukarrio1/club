@@ -1,7 +1,20 @@
 import axios from "axios";
 import $ from "jquery";
+
 var toast = require("../components/toast.js");
 var val = require("../components/validate.js");
+var store = require("../components/localStorage.js");
+var Echo = require("../components/server.js");
+var edit = {
+  name: "Member Club",
+  location: "Member Club",
+  selected: "selected",
+  created_at: null,
+  updated_at: null,
+  edit: false,
+  id: null
+};
+var IsEdit = false;
 
 var fields = document.querySelectorAll(".createUser");
 var createUserForm = document.querySelector("#createUserForm");
@@ -16,13 +29,21 @@ var limitMax = document.querySelector("#limitMax");
 var allUserCount = document.querySelector("#allUserCount");
 var club = document.querySelector("#club");
 var userDisplayTable = document.querySelector("#userDisplayTable");
+var editModalHeader = $("#editModalHeader");
+var editModalSubmitBtn = $("#editModalSubmitBtn");
+var editModalHeaderColor = $("#editModalHeaderColor");
+
 /**
 Event Listeners
 */
+
 if (createUserForm) {
   createUserForm.addEventListener("submit", e => {
     e.preventDefault();
-    CreateUser();
+    if (IsEdit) {
+    } else {
+      CreateUser();
+    }
   });
 }
 
@@ -129,7 +150,7 @@ var CreateUser = async () => {
         "success",
         "center"
       );
-      await SearchUser(
+      SearchUser(
         searchUser.value,
         parishSort.value,
         clubSort.value,
@@ -181,8 +202,6 @@ var SearchUser = async (
       allUserCount.innerHTML = finalSort.length;
     }
     finalSort.forEach((f, i) => {
-      let created_at = new Date(f.created_at.date);
-      let created = created_at.toString().slice(0, 24);
       userOutPut += `<tr>
       <th scope="row">${i}</th>
       <td>${f.name}</td>
@@ -194,10 +213,23 @@ var SearchUser = async (
       <td>${f.address}</td>
       <td>${f.parish}</td>
       <td>${f.club.name}</td>
-      <td>${created}</td>
+      <td>${val.formateDate(f.created_at)}</td>
       <td><div class="row">
-     <div class="col-sm-6 text-left"> <a class="text-warning editUser" title="Edit ${f.name}" id="edit${f.id}"><i class="fas fa-edit"></i></a></div>
-      <div class="col-sm-6 text-right"><a class="text-danger deleteUser" title="Delete ${f.name}" id="delete${f.id}"><i class="fas fa-trash"></i></a></div>
+     <div class="col-sm-6 text-left"> 
+     <a class="text-warning editUser" title="Edit ${f.name}" id="edit${
+        f.id
+      }" data-toggle="modal"
+     data-target="#modalContactForm">
+     <i class="fas fa-edit">
+     </i>
+     </a>
+     </div>
+      <div class="col-sm-6 text-right">
+      <a class="text-danger deleteUser" title="Delete ${f.name}" id="delete${
+        f.id
+      }">
+      <i class="fas fa-trash"></i></a>
+      </div>
       </div></td>
     </tr>`;
     });
@@ -211,7 +243,17 @@ var SearchUser = async (
       deleteUser.forEach(d => {
         d.addEventListener("click", () => {
           let id = d.id.substr(6);
-          console.log(id);
+          removeMember(id);
+        });
+      });
+    }
+    if (editUser) {
+      editUser.forEach(e => {
+        e.addEventListener("click", () => {
+          let id = e.id.substr(4);
+          // toast.toast(id, "success", "center");
+          store.set("editUserId", id);
+          populateEditFrom(id);
         });
       });
     }
@@ -230,22 +272,78 @@ var clubDropDownSort = async () => {
       let selected = c.name == "all" ? "selected" : "";
       clubOut += `<option value="${c.name}" ${selected}>${name}</option>`;
     });
-    clubSort.innerHTML = clubOut;
+    if (clubSort) {
+      clubSort.innerHTML = clubOut;
+    }
   } catch (err) {}
 };
 
-var clubDropDownCreate = async () => {
+var clubDropDownCreate = async ed => {
   let clubs = await axios.get("/admin/clubs");
-  clubs.data.push({ name: "default", location: "Member Club" });
   let clubOut = "";
+  clubs.data.push(ed);
   clubs.data.forEach(c => {
-    let name = c.name == "default" ? c.location : c.name;
-    let selected = c.name == "default" ? "selected" : "";
-    clubOut += `<option value="${c.name}" ${selected}>${name}</option>`;
+    let selected = c.selected == "selected" ? "selected" : "";
+    clubOut += `<option value="${c.name}" id="club${c.id}" ${selected}>${c.name}</option>`;
   });
-  club.innerHTML = clubOut;
+  // let fUpdate = clubs.data.filter(f => f.edit == true)[0] || {};
+  // if (fUpdate.edit == true) {
+  //   clubs.data.forEach((c, i) => {
+  //     let selected = fUpdate.id == c.id ? "selected" : "";
+  //     fUpdate.id == c.id ? console.log(i) : "";
+  //     clubOut += `<option value="${c.name}" id="club${c.id}" ${selected}>${c.name}</option>`;
+  //   });
+  // } else {
+  // }
+  // console.log("Populate:", fUpdate);
+  // console.log("ClubDrop:", clubs.data);
+  if (club) {
+    club.innerHTML = clubOut;
+  }
 };
 
-clubDropDownCreate();
+var removeMember = async id => {
+  try {
+    let res = await axios.delete("/admin/delete/user/" + id);
+    toast.toast("Member was removed successfully", "success", "center");
+    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+  } catch (error) {
+    throw error;
+  }
+};
+
+var populateEditFrom = async id => {
+  try {
+    let res = await axios.get("/admin/user/" + id);
+    let keys = Object.keys(res.data);
+    keys.forEach(k => {
+      fields.forEach(f => {
+        if (
+          f.id == k &&
+          f.id != "club" &&
+          f.id != "parish" &&
+          f.id != "gender"
+        ) {
+          f.value = res.data[k];
+        }
+      });
+    });
+    editModalHeader.html("Edit Member");
+    editModalSubmitBtn.removeClass("btn-success");
+    editModalSubmitBtn.addClass("btn-warning");
+    editModalSubmitBtn.html(`<i class="fas fa-edit"></i> Edit`);
+    editModalHeaderColor.removeClass("bg-info");
+    editModalHeaderColor.addClass("bg-warning");
+    clubDropDownCreate(edit);
+  } catch (err) {
+    toast.toast(err.message, "error", "center");
+  }
+};
+
+clubDropDownCreate(edit);
 clubDropDownSort();
 SearchUser();
+
+Echo.Echo.channel("newClub").listen("newClub", e => {
+  console.log("hello");
+});

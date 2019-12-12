@@ -18,6 +18,8 @@
     "vue": "^2.1.10"
   },
   "dependencies": {
-    "notifit-js": "^1.0.0"
+    "laravel-echo": "^1.6.1",
+    "notifit-js": "^1.0.0",
+    "pusher-js": "^5.0.3"
   }
 }

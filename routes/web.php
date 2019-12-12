@@ -35,10 +35,17 @@ Route::prefix('admin')->group(function () {
     Route::post('/user/emailCheck', 'Admin\UserController@emailCheck');
     Route::post('/create', 'Admin\UserController@store');
     Route::post('/user/search', 'Admin\UserController@searchUser');
+    Route::delete('/delete/user/{user}', 'Admin\UserController@removeMember');
+    Route::get('/user/{user}', 'Admin\UserController@single');
 
     //clubs routes
     Route::get('/clubs', 'Admin\ClubController@index');
     Route::get('/clubsPage', 'Admin\ClubController@clubPage')->name('admin.clubs');
+    Route::post('/clubs/search', 'Admin\ClubController@searchClubs');
+    Route::post('/club', 'Admin\ClubController@store');
+    Route::delete('/club/delete/{id}', 'Admin\ClubController@delete');
+    Route::post('/club/{club}', 'Admin\ClubController@update');
+    Route::get('/club/{club}', 'Admin\ClubController@show');
 
     // Password reset routes
     Route::post('/password/email', 'Auth\AdminForgotPasswordController@sendResetLinkEmail')->name('admin.password.email');

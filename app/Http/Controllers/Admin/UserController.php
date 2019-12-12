@@ -86,6 +86,7 @@ class UserController extends Controller
         $users = array();
         foreach ($results as $user) {
             $club = Club::find($user->club_id);
+            $IsDeleted = empty($club) ? ['name' => 'Club Deleted', 'location' => 'Club deleted', 'id' => 0] : $club;
             $users[] = [
                 'name' => $user->name,
                 'email' => $user->email,
@@ -95,11 +96,37 @@ class UserController extends Controller
                 'trn' => $user->trn,
                 'id' => $user->id,
                 'gender' => $user->gender,
-                'club' => $club,
+                'club' => $IsDeleted,
                 'parish' => $user->parish,
                 'created_at' => $user->created_at,
             ];
         }
         return $users;
+    }
+
+    public function removeMember(User $user)
+    {
+
+        $user->delete();
+        return ['status' => 200];
+    }
+
+    public function single(User $user)
+    {
+        $club = Club::where('id', $user->club_id)->first();
+        $res = array();
+        $res = [
+            'club' => $club,
+            'id' => $user->id,
+            'name' => $user->name,
+            'parish' => $user->parish,
+            'address' => $user->address,
+            'age' => $user->age,
+            'gender' => $user->gender,
+            'email' => $user->email,
+            'trn' => $user->trn,
+            'phone' => $user->telephone,
+        ];
+        return $res;
     }
 }
