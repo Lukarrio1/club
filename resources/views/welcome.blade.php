@@ -108,7 +108,7 @@
             <!-- Content -->
             <div class="text-center white-text mx-5 wow fadeIn">
               <h1 class="mb-4">
-                <strong>Learn Bootstrap 4 with MDB</strong>
+                <strong>Welcome to Mandeville Police Youth Club</strong>
               </h1>
 
               <p>
@@ -120,11 +120,12 @@
                   written versions
                   available. Create your own, stunning website.</strong>
               </p>
-
+<!--
               <a target="_blank" href="https://mdbootstrap.com/education/bootstrap/" class="btn btn-outline-white btn-lg">Start
-                free tutorial
-                <i class="fas fa-graduation-cap ml-2"></i>
-              </a>
+                free tutorial -->
+                <i class="fas fa-angle-double-down"></i>
+                <i class="fas fa-angle-double-down"></i>
+              <!-- </a> -->
             </div>
             <!-- Content -->
 
@@ -145,7 +146,7 @@
             <!-- Content -->
             <div class="text-center white-text mx-5 wow fadeIn">
               <h1 class="mb-4">
-                <strong>Learn Bootstrap 4 with MDB</strong>
+                <strong>Welcome to Mandeville Police Youth Club</strong>
               </h1>
 
               <p>
@@ -158,10 +159,11 @@
                   available. Create your own, stunning website.</strong>
               </p>
 
-              <a target="_blank" href="https://mdbootstrap.com/education/bootstrap/" class="btn btn-outline-white btn-lg">Start
+               <a target="_blank" href="https://mdbootstrap.com/education/bootstrap/" class="btn btn-outline-white btn-lg">Start
                 free tutorial
-                <i class="fas fa-graduation-cap ml-2"></i>
-              </a>
+                <i class="fas fa-angle-double-down"></i>
+                <i class="fas fa-angle-double-down"></i>
+              </a> -->
             </div>
             <!-- Content -->
 
@@ -182,7 +184,7 @@
             <!-- Content -->
             <div class="text-center white-text mx-5 wow fadeIn">
               <h1 class="mb-4">
-                <strong>Learn Bootstrap 4 with MDB</strong>
+                <strong>Welcome to Mandeville Police Youth Club</strong>
               </h1>
 
               <p>
@@ -195,9 +197,10 @@
                   available. Create your own, stunning website.</strong>
               </p>
 
-              <a target="_blank" href="https://mdbootstrap.com/education/bootstrap/" class="btn btn-outline-white btn-lg">Start
+               <a target="_blank" href="https://mdbootstrap.com/education/bootstrap/" class="btn btn-outline-white btn-lg">Start
                 free tutorial
-                <i class="fas fa-graduation-cap ml-2"></i>
+                <i class="fas fa-angle-double-down"></i>
+                <i class="fas fa-angle-double-down"></i>
               </a>
             </div>
             <!-- Content -->
