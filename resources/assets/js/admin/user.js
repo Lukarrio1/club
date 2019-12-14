@@ -4,7 +4,6 @@ import $ from "jquery";
 var toast = require("../components/toast.js");
 var val = require("../components/validate.js");
 var store = require("../components/localStorage.js");
-var Echo = require("../components/server.js");
 var edit = {
   name: "Member Club",
   location: "Member Club",
@@ -251,14 +250,13 @@ var SearchUser = async (
       editUser.forEach(e => {
         e.addEventListener("click", () => {
           let id = e.id.substr(4);
-          // toast.toast(id, "success", "center");
           store.set("editUserId", id);
           populateEditFrom(id);
         });
       });
     }
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
 
@@ -336,14 +334,10 @@ var populateEditFrom = async id => {
     editModalHeaderColor.addClass("bg-warning");
     clubDropDownCreate(edit);
   } catch (err) {
-    toast.toast(err.message, "error", "center");
+    throw err;
   }
 };
 
 clubDropDownCreate(edit);
 clubDropDownSort();
 SearchUser();
-
-Echo.Echo.channel("newClub").listen("newClub", e => {
-  console.log("hello");
-});

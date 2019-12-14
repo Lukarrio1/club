@@ -47,6 +47,9 @@ Route::prefix('admin')->group(function () {
     Route::post('/club/{club}', 'Admin\ClubController@update');
     Route::get('/club/{club}', 'Admin\ClubController@show');
 
+    //Message routes
+    Route::get('/message/page', 'Admin\MessageController@messagePage')->name('message.page');
+
     // Password reset routes
     Route::post('/password/email', 'Auth\AdminForgotPasswordController@sendResetLinkEmail')->name('admin.password.email');
     Route::get('/password/reset', 'Auth\AdminForgotPasswordController@showLinkRequestForm')->name('admin.password.request');
