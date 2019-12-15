@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 // use App\Club
 use App\Club;
 use App\Http\Controllers\Controller;
+use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -43,6 +44,7 @@ class UserController extends Controller
             'age' => 'required',
             'password' => 'required|min:6',
             'gender' => 'required',
+            'position' => 'required',
         ]);
         $store = new User;
         $name = htmlentities($request->name);
@@ -52,7 +54,17 @@ class UserController extends Controller
         $phone = htmlentities($request->phone);
         $parish = htmlentities($request->parish);
         $age = htmlentities($request->age);
+        $position = htmlentities($request->position);
         $club = Club::where('name', $request->club)->first();
+        $isLeader = Role::where('role', 'leader');
+        $users = array();
+        foreach ($isLeader as $user) {
+            $u = User::where('id', $user->user_id)->first();
+            $user[] = [$u];
+        }
+        if (count($users) > 0) {
+            return ['status' => 'There is already a leader for that club', 'error' => true];
+        }
         $password = Hash::make(htmlentities($request->password));
         $gender = htmlentities($request->gender);
         $store->name = $name;
@@ -65,7 +77,13 @@ class UserController extends Controller
         $store->password = $password;
         $store->gender = $gender;
         $store->club_id = $club->id;
+        $store->position = $position;
         $store->save();
+        $use = User::where('email', $email)->first();
+        $role = new Role;
+        $role->user_id = $use->id;
+        $role->role = $position;
+        $role->save();
         // $this->newUSer(new newUser($name, $request->password));
         return ['status' => 200];
     }
@@ -86,6 +104,7 @@ class UserController extends Controller
         $users = array();
         foreach ($results as $user) {
             $club = Club::find($user->club_id);
+            $role = Role::where('user_id', $user->id)->first();
             $IsDeleted = empty($club) ? ['name' => 'Club Deleted', 'location' => 'Club deleted', 'id' => 0] : $club;
             $users[] = [
                 'name' => $user->name,
@@ -99,6 +118,7 @@ class UserController extends Controller
                 'club' => $IsDeleted,
                 'parish' => $user->parish,
                 'created_at' => $user->created_at,
+                'role' => $role,
             ];
         }
         return $users;
@@ -114,6 +134,22 @@ class UserController extends Controller
     public function single(User $user)
     {
         $club = Club::where('id', $user->club_id)->first();
+        // $club_obj = [];
+        // if (!empty($club)) {
+        //     $club_obj = [
+        //         'name' => $club->name,
+        //         'location' => $club->location,
+        //         'created_at' => $club->created_at,
+        //         'updated_at' => $club->updated_at,
+        //     ];
+        // } else {
+        //     $club_obj = [
+        //         'name' => "Member Club",
+        //         'location' => "Member Location",
+        //         'created_at' => null,
+        //         'updated_at' => null,
+        //     ];
+        // }
         $res = array();
         $res = [
             'club' => $club,

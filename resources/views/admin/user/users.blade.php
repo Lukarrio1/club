@@ -101,6 +101,7 @@
                   <th scope="col">TRN</th>
                   <th scope="col">Address</th>
                   <th scope="col">Parish</th>
+                  <th scope="col">Role</th>
                   <th scope="col">Club</th>
                   <th scope="col">Joined</th>
                   <th scope="col">Actions</th>
@@ -240,9 +241,21 @@
             id="club"
             name="club"
             >
-            <option selected disabled class="grey-text">Member Club</option>
           </select>
         </div>
+        <div class="md-form mb-5">
+          <select
+                class="mdb-select md-form colorful-select dropdown-success createUser"
+                data-val="true"
+                id="position"
+                name="position"
+              >
+              <option selected disabled>Member Position</option>
+                <option value="leader">Leader</option>
+                <option value="member">Member</option>
+
+          </select>
+      </div>
         <div class="md-form mb-5">
             <i class="fas fa-lock  prefix grey-text"></i>
             <input

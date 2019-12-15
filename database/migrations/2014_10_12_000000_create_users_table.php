@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
             $table->string('address');
             $table->string('gender');
             $table->integer('club_id');
+            $table->string('position');
             $table->rememberToken();
             $table->timestamps();
         });

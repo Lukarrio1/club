@@ -16,7 +16,6 @@ class ClubController extends Controller
 
     public function index()
     {
-        // $this->dummyClub();
         $clubs = Club::orderBy('created_at', 'DESC')->get();
         $res = array();
         foreach ($clubs as $club) {
@@ -26,8 +25,8 @@ class ClubController extends Controller
                 'id' => $club->id,
                 'created_at' => $club->created_at,
                 'update_at' => $club->updated_at,
-                'selected' => "",
-                'edit' => false];
+                'selected' => false,
+            ];
 
         }
 

@@ -28,7 +28,7 @@
           </li>
           <li>
             <a
-              href="{{ route('admin.clubs') }}"
+              href="{{ route('admin.message') }}"
               class="collapsible-header waves-effect"
               ><i class="fas fa-envelope"></i> Message
             </a>

@@ -88,7 +88,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
-    <script src="{{ asset('/public/js/jquery-3.4.1.min.js) }}"></script>
+    <script src="{{ asset('/public/js/jquery-3.4.1.min.js') }}"></script>
     <script src="{{ asset('/public/js/popper.min.js') }}"></script>
     <script src="{{ asset('/public/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('/public/js/mdb.min.js') }}"></script>

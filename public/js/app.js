@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "./";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 46);
+/******/ 	return __webpack_require__(__webpack_require__.s = 39);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -376,7 +376,7 @@ module.exports = {
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(16);
+module.exports = __webpack_require__(15);
 
 /***/ }),
 /* 2 */
@@ -10991,7 +10991,7 @@ return jQuery;
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(30);
+var normalizeHeaderName = __webpack_require__(29);
 
 var PROTECTION_PREFIX = /^\)\]\}',?\n/;
 var DEFAULT_CONTENT_TYPE = {
@@ -11106,12 +11106,12 @@ module.exports = { toast: toast };
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var settle = __webpack_require__(22);
-var buildURL = __webpack_require__(25);
-var parseHeaders = __webpack_require__(31);
-var isURLSameOrigin = __webpack_require__(29);
+var settle = __webpack_require__(21);
+var buildURL = __webpack_require__(24);
+var parseHeaders = __webpack_require__(30);
+var isURLSameOrigin = __webpack_require__(28);
 var createError = __webpack_require__(8);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(24);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(23);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -11207,7 +11207,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(27);
+      var cookies = __webpack_require__(26);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -11328,7 +11328,7 @@ module.exports = function isCancel(value) {
 "use strict";
 
 
-var enhanceError = __webpack_require__(21);
+var enhanceError = __webpack_require__(20);
 
 /**
  * Create an Error with the specified message, config, error code, and response.
@@ -11622,48 +11622,23 @@ process.umask = function() { return 0; };
 
 /***/ }),
 /* 13 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__js_admin_admin_js__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__js_admin_user__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__admin_club__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__js_admin_admin_js__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__js_admin_user__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__admin_club__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__admin_club___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__admin_club__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__admin_message__ = __webpack_require__(48);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-__webpack_require__(36);
+__webpack_require__(35);
+
 
 
 
@@ -11674,13 +11649,13 @@ __webpack_require__(36);
  */
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11688,7 +11663,7 @@ __webpack_require__(36);
 
 var utils = __webpack_require__(0);
 var bind = __webpack_require__(9);
-var Axios = __webpack_require__(18);
+var Axios = __webpack_require__(17);
 var defaults = __webpack_require__(3);
 
 /**
@@ -11723,14 +11698,14 @@ axios.create = function create(instanceConfig) {
 
 // Expose Cancel & CancelToken
 axios.Cancel = __webpack_require__(6);
-axios.CancelToken = __webpack_require__(17);
+axios.CancelToken = __webpack_require__(16);
 axios.isCancel = __webpack_require__(7);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(32);
+axios.spread = __webpack_require__(31);
 
 module.exports = axios;
 
@@ -11739,7 +11714,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11803,7 +11778,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11811,10 +11786,10 @@ module.exports = CancelToken;
 
 var defaults = __webpack_require__(3);
 var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(19);
-var dispatchRequest = __webpack_require__(20);
-var isAbsoluteURL = __webpack_require__(28);
-var combineURLs = __webpack_require__(26);
+var InterceptorManager = __webpack_require__(18);
+var dispatchRequest = __webpack_require__(19);
+var isAbsoluteURL = __webpack_require__(27);
+var combineURLs = __webpack_require__(25);
 
 /**
  * Create a new instance of Axios
@@ -11895,7 +11870,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11954,14 +11929,14 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var transformData = __webpack_require__(23);
+var transformData = __webpack_require__(22);
 var isCancel = __webpack_require__(7);
 var defaults = __webpack_require__(3);
 
@@ -12040,7 +12015,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12066,7 +12041,7 @@ module.exports = function enhanceError(error, config, code, response) {
 
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12098,7 +12073,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12125,7 +12100,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12168,7 +12143,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12243,7 +12218,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12262,7 +12237,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12322,7 +12297,7 @@ module.exports = (
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12343,7 +12318,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12418,7 +12393,7 @@ module.exports = (
 
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12437,7 +12412,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12481,7 +12456,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12515,7 +12490,7 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12618,7 +12593,7 @@ var adminDelete = async function adminDelete() {
 
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var axios = __webpack_require__(1);
@@ -12780,7 +12755,7 @@ var EditClub = async function EditClub(id) {
 };
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12797,14 +12772,11 @@ var store = __webpack_require__(10);
 var edit = {
   name: "Member Club",
   location: "Member Club",
-  selected: "selected",
+  selected: true,
   created_at: null,
-  updated_at: null,
-  edit: false,
-  id: null
+  updated_at: null
 };
 var IsEdit = false;
-
 var fields = document.querySelectorAll(".createUser");
 var createUserForm = document.querySelector("#createUserForm");
 var closeCreateUserModalBtn = document.querySelector("#closeCreateUserModalBtn");
@@ -12867,6 +12839,8 @@ var CreateUser = async function CreateUser() {
   var parish = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#parish").val();
   var password = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#password").val();
   var gender = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#gender").val();
+  var position = __WEBPACK_IMPORTED_MODULE_1_jquery___default()("#position").val();
+  console.log(position);
   var fd = new FormData();
   if (name.length < 3) {
     toast.toast("Name is too short it must be at least 3 characters long .", "error", "center");
@@ -12888,6 +12862,8 @@ var CreateUser = async function CreateUser() {
     toast.toast("The members gender is required.", "error", "center");
   } else if (club.value == "default") {
     toast.toast("The members club is required.", "error", "center");
+  } else if (position.length < 1) {
+    toast.toast("The members position is required.", "error", "center");
   } else {
     fd.append("name", name);
     fd.append("email", email);
@@ -12899,6 +12875,7 @@ var CreateUser = async function CreateUser() {
     fd.append("password", password);
     fd.append("gender", gender);
     fd.append("club", club.value);
+    fd.append("position", position);
     try {
       var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/create", fd);
       closeCreateUserModalBtn.click();
@@ -12957,7 +12934,7 @@ var SearchUser = async function SearchUser() {
       allUserCount.innerHTML = finalSort.length;
     }
     finalSort.forEach(function (f, i) {
-      userOutPut += "<tr>\n      <th scope=\"row\">" + i + "</th>\n      <td>" + f.name + "</td>\n      <td>" + f.email + "</td>\n      <td>" + f.gender + "</td>\n      <td>" + f.age + "</td>\n      <td>" + f.phone + "</td>\n      <td>" + f.trn + "</td>\n      <td>" + f.address + "</td>\n      <td>" + f.parish + "</td>\n      <td>" + f.club.name + "</td>\n      <td>" + val.formateDate(f.created_at) + "</td>\n      <td><div class=\"row\">\n     <div class=\"col-sm-6 text-left\"> \n     <a class=\"text-warning editUser\" title=\"Edit " + f.name + "\" id=\"edit" + f.id + "\" data-toggle=\"modal\"\n     data-target=\"#modalContactForm\">\n     <i class=\"fas fa-edit\">\n     </i>\n     </a>\n     </div>\n      <div class=\"col-sm-6 text-right\">\n      <a class=\"text-danger deleteUser\" title=\"Delete " + f.name + "\" id=\"delete" + f.id + "\">\n      <i class=\"fas fa-trash\"></i></a>\n      </div>\n      </div></td>\n    </tr>";
+      userOutPut += "<tr>\n      <th scope=\"row\">" + i + "</th>\n      <td>" + f.name + "</td>\n      <td>" + f.email + "</td>\n      <td>" + f.gender + "</td>\n      <td>" + f.age + "</td>\n      <td>" + f.phone + "</td>\n      <td>" + f.trn + "</td>\n      <td>" + f.address + "</td>\n      <td>" + f.parish + "</td>\n      <td>" + f.role.role + "</td>\n      <td>" + f.club.name + "</td>\n      <td>" + val.formateDate(f.created_at) + "</td>\n      <td><div class=\"row\">\n     <div class=\"col-sm-6 text-left\"> \n     <a class=\"text-warning editUser\" title=\"Edit " + f.name + "\" id=\"edit" + f.id + "\" data-toggle=\"modal\"\n     data-target=\"#modalContactForm\">\n     <i class=\"fas fa-edit\">\n     </i>\n     </a>\n     </div>\n      <div class=\"col-sm-6 text-right\">\n      <a class=\"text-danger deleteUser\" title=\"Delete " + f.name + "\" id=\"delete" + f.id + "\">\n      <i class=\"fas fa-trash\"></i></a>\n      </div>\n      </div></td>\n    </tr>";
     });
     if (userDisplayTable) {
       userDisplayTable.innerHTML = userOutPut;
@@ -13003,29 +12980,35 @@ var clubDropDownSort = async function clubDropDownSort() {
   } catch (err) {}
 };
 
-var clubDropDownCreate = async function clubDropDownCreate(ed) {
-  var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
-  var clubOut = "";
-  clubs.data.push(ed);
-  clubs.data.forEach(function (c) {
-    var selected = c.selected == "selected" ? "selected" : "";
-    clubOut += "<option value=\"" + c.name + "\" id=\"club" + c.id + "\" " + selected + ">" + c.name + "</option>";
-  });
-  // let fUpdate = clubs.data.filter(f => f.edit == true)[0] || {};
-  // if (fUpdate.edit == true) {
-  //   clubs.data.forEach((c, i) => {
-  //     let selected = fUpdate.id == c.id ? "selected" : "";
-  //     fUpdate.id == c.id ? console.log(i) : "";
-  //     clubOut += `<option value="${c.name}" id="club${c.id}" ${selected}>${c.name}</option>`;
-  //   });
-  // } else {
-  // }
-  // console.log("Populate:", fUpdate);
-  // console.log("ClubDrop:", clubs.data);
-  if (club) {
-    club.innerHTML = clubOut;
+/**
+ * @description creates a dropdown
+ * @param editData
+ */
+var clubDropDownCreate = async function clubDropDownCreate(editData) {
+  try {
+    var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
+    var clubOut = "";
+    clubs.data.push(editData);
+    clubs.data.forEach(function (_ref) {
+      var selected = _ref.selected,
+          name = _ref.name,
+          id = _ref.id;
+
+      var isSelected = selected ? true : false;
+      clubOut += "<option value=\"" + name + "\" id=\"club" + id + "\" " + isSelected + ">" + name + "</option>";
+    });
+    if (club) {
+      club.innerHTML = clubOut;
+    }
+  } catch (err) {
+    throw new Error(err);
   }
 };
+
+/**
+ * @description remove a Member
+ * @param id
+ */
 
 var removeMember = async function removeMember(id) {
   try {
@@ -13041,6 +13024,7 @@ var populateEditFrom = async function populateEditFrom(id) {
   try {
     var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/user/" + id);
     var keys = Object.keys(res.data);
+    console.log("populateForm :", res.data);
     keys.forEach(function (k) {
       fields.forEach(function (f) {
         if (f.id == k && f.id != "club" && f.id != "parish" && f.id != "gender") {
@@ -13054,21 +13038,31 @@ var populateEditFrom = async function populateEditFrom(id) {
     editModalSubmitBtn.html("<i class=\"fas fa-edit\"></i> Edit");
     editModalHeaderColor.removeClass("bg-info");
     editModalHeaderColor.addClass("bg-warning");
-    clubDropDownCreate(edit);
+    var passObj = {};
+    if (res.data.club) {
+      passObj = {
+        name: res.data.club.name,
+        location: res.data.club.location,
+        created_at: res.data.club.created_at,
+        updated_at: res.data.club.updated_at,
+        selected: true
+      };
+    }
+    clubDropDownCreate(res.data.club ? passObj : edit);
   } catch (err) {
     throw err;
   }
 };
 
-clubDropDownCreate(edit);
+clubDropDownCreate(edit); //default
 clubDropDownSort();
 SearchUser();
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
-window._ = __webpack_require__(43);
+window._ = __webpack_require__(36);
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -13104,13 +13098,7 @@ window.axios.defaults.headers.common = {
  */
 
 /***/ }),
-/* 37 */,
-/* 38 */,
-/* 39 */,
-/* 40 */,
-/* 41 */,
-/* 42 */,
-/* 43 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -30227,11 +30215,37 @@ window.axios.defaults.headers.common = {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13), __webpack_require__(45)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(37), __webpack_require__(38)(module)))
 
 /***/ }),
-/* 44 */,
-/* 45 */
+/* 37 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 38 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -30259,12 +30273,129 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 46 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(14);
-module.exports = __webpack_require__(15);
+__webpack_require__(13);
+module.exports = __webpack_require__(14);
 
+
+/***/ }),
+/* 40 */,
+/* 41 */,
+/* 42 */,
+/* 43 */,
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_jquery__);
+
+
+var store = __webpack_require__(10);
+
+var allClubs = document.querySelector("#allClubs");
+var mClubSearch = document.querySelector("#searchMessage");
+var clubNameFm = document.querySelector("#clubNameFm");
+var allMessages = document.querySelector("#allMessages");
+var sendMessage = document.querySelector("#sendMessage");
+var message = document.querySelector("#message");
+
+if (mClubSearch) {
+  mClubSearch.addEventListener("keyup", function () {
+    SearchClubMessages(mClubSearch.value || "all");
+  });
+}
+
+if (sendMessage) {
+  sendMessage.addEventListener("submit", function (e) {
+    e.preventDefault();
+    sendMessage(message.value);
+  });
+}
+
+var SearchClubMessages = async function SearchClubMessages() {
+  var search = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "all";
+
+  var fd = new FormData();
+  var output = "";
+  fd.append("search", search);
+  try {
+    var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/clubs/search", fd);
+    res.data.forEach(function (_ref) {
+      var id = _ref.id,
+          name = _ref.name;
+
+      var isActive = store.get("club_id") == id ? "active" : "";
+      output += " <li class=\"list-group-item viewGroupMessage " + isActive + "\" style=\"cursor:pointer\" id=\"gm" + id + "\">" + name + "</li>";
+    });
+    if (allClubs) {
+      allClubs.innerHTML = output;
+    }
+    var viewGroupMessage = document.querySelectorAll(".viewGroupMessage");
+    if (viewGroupMessage) {
+      viewGroupMessage.forEach(function (v) {
+        v.addEventListener("click", function () {
+          var id = v.id.substring(2);
+          store.set("club_id", id);
+          SearchClubMessages(mClubSearch.value);
+          getMessages();
+        });
+      });
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+SearchClubMessages();
+
+var getMessages = async function getMessages() {
+  try {
+    var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/messages/" + store.get("club_id"));
+    var club = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/club/" + store.get("club_id"));
+    var output = "";
+    res.data.forEach(function (_ref2) {
+      var id = _ref2.id,
+          from = _ref2.from,
+          message = _ref2.message,
+          to = _ref2.to;
+
+      var position = store.get("club_id") == to ? "text-right mr-5 mb-1" : "text-left ml-5 mb-1";
+      output += "<div class=\"" + position + "\">" + message + "<div>hello</div></div>";
+    });
+    if (clubNameFm && allMessages) {
+      clubNameFm.innerHTML = club.data.name;
+      allMessages.innerHTML = output;
+    }
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+var sendMessage = async function sendMessage(msg) {
+  var fd = new FormData();
+  fd.append("message", msg);
+  fd.append("to", store.get("club_id"));
+  try {
+    var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/send/message", fd);
+    getMessages();
+    message.value = "";
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+if (store.get("club_id")) {
+  getMessages();
+}
 
 /***/ })
 /******/ ]);

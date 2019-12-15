@@ -7,14 +7,11 @@ var store = require("../components/localStorage.js");
 var edit = {
   name: "Member Club",
   location: "Member Club",
-  selected: "selected",
+  selected: true,
   created_at: null,
-  updated_at: null,
-  edit: false,
-  id: null
+  updated_at: null
 };
-var IsEdit = false;
-
+let IsEdit = false;
 var fields = document.querySelectorAll(".createUser");
 var createUserForm = document.querySelector("#createUserForm");
 var closeCreateUserModalBtn = document.querySelector(
@@ -85,6 +82,8 @@ var CreateUser = async () => {
   let parish = $("#parish").val();
   let password = $("#password").val();
   let gender = $("#gender").val();
+  let position = $("#position").val();
+  console.log(position);
   let fd = new FormData();
   if (name.length < 3) {
     toast.toast(
@@ -130,6 +129,8 @@ var CreateUser = async () => {
     toast.toast("The members gender is required.", "error", "center");
   } else if (club.value == "default") {
     toast.toast("The members club is required.", "error", "center");
+  } else if (position.length < 1) {
+    toast.toast("The members position is required.", "error", "center");
   } else {
     fd.append("name", name);
     fd.append("email", email);
@@ -141,6 +142,7 @@ var CreateUser = async () => {
     fd.append("password", password);
     fd.append("gender", gender);
     fd.append("club", club.value);
+    fd.append("position", position);
     try {
       let res = await axios.post("/admin/create", fd);
       closeCreateUserModalBtn.click();
@@ -211,6 +213,7 @@ var SearchUser = async (
       <td>${f.trn}</td>
       <td>${f.address}</td>
       <td>${f.parish}</td>
+      <td>${f.role.role}</td>
       <td>${f.club.name}</td>
       <td>${val.formateDate(f.created_at)}</td>
       <td><div class="row">
@@ -276,29 +279,31 @@ var clubDropDownSort = async () => {
   } catch (err) {}
 };
 
-var clubDropDownCreate = async ed => {
-  let clubs = await axios.get("/admin/clubs");
-  let clubOut = "";
-  clubs.data.push(ed);
-  clubs.data.forEach(c => {
-    let selected = c.selected == "selected" ? "selected" : "";
-    clubOut += `<option value="${c.name}" id="club${c.id}" ${selected}>${c.name}</option>`;
-  });
-  // let fUpdate = clubs.data.filter(f => f.edit == true)[0] || {};
-  // if (fUpdate.edit == true) {
-  //   clubs.data.forEach((c, i) => {
-  //     let selected = fUpdate.id == c.id ? "selected" : "";
-  //     fUpdate.id == c.id ? console.log(i) : "";
-  //     clubOut += `<option value="${c.name}" id="club${c.id}" ${selected}>${c.name}</option>`;
-  //   });
-  // } else {
-  // }
-  // console.log("Populate:", fUpdate);
-  // console.log("ClubDrop:", clubs.data);
-  if (club) {
-    club.innerHTML = clubOut;
+/**
+ * @description creates a dropdown
+ * @param editData
+ */
+var clubDropDownCreate = async editData => {
+  try {
+    let clubs = await axios.get("/admin/clubs");
+    let clubOut = "";
+    clubs.data.push(editData);
+    clubs.data.forEach(({ selected, name, id }) => {
+      let isSelected = selected ? true : false;
+      clubOut += `<option value="${name}" id="club${id}" ${isSelected}>${name}</option>`;
+    });
+    if (club) {
+      club.innerHTML = clubOut;
+    }
+  } catch (err) {
+    throw new Error(err);
   }
 };
+
+/**
+ * @description remove a Member
+ * @param id
+ */
 
 var removeMember = async id => {
   try {
@@ -314,6 +319,7 @@ var populateEditFrom = async id => {
   try {
     let res = await axios.get("/admin/user/" + id);
     let keys = Object.keys(res.data);
+    console.log("populateForm :", res.data);
     keys.forEach(k => {
       fields.forEach(f => {
         if (
@@ -332,12 +338,22 @@ var populateEditFrom = async id => {
     editModalSubmitBtn.html(`<i class="fas fa-edit"></i> Edit`);
     editModalHeaderColor.removeClass("bg-info");
     editModalHeaderColor.addClass("bg-warning");
-    clubDropDownCreate(edit);
+    let passObj = {};
+    if (res.data.club) {
+      passObj = {
+        name: res.data.club.name,
+        location: res.data.club.location,
+        created_at: res.data.club.created_at,
+        updated_at: res.data.club.updated_at,
+        selected: true
+      };
+    }
+    clubDropDownCreate(res.data.club ? passObj : edit);
   } catch (err) {
     throw err;
   }
 };
 
-clubDropDownCreate(edit);
+clubDropDownCreate(edit); //default
 clubDropDownSort();
 SearchUser();
