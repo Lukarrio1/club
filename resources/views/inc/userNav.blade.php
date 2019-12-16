@@ -28,9 +28,9 @@
           </li>
           <li>
             <a
-              href="#!"
+             href="{{route('user.message')}}"
               class="collapsible-header waves-effect"
-              ><i class="fas fa-envelope"></i> Page Here
+              ><i class="fas fa-envelope"></i> Message
             </a>
           </li>
         </ul>
@@ -91,7 +91,8 @@
           class="dropdown-menu dropdown-menu-right"
           aria-labelledby="navbarDropdownMenuLink"
         >
-          <a class="dropdown-item" href="#!"
+      <a class="dropdown-item" href=""
+
             ><i class="fas fa-user"></i> My Account</a
           >
           <a

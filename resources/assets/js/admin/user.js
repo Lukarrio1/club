@@ -264,12 +264,7 @@ var UserSearch = async (
 };
 
 if (store.get("leader") && parishSort && limit) {
-  UserSearch(
-    store.get("leader").leader,
-    parishSort.value,
-    store.get("leader").club,
-    limit.value
-  );
+  UserSearch(store.get("leader").leader);
   searchUser.value = store.get("leader").leader;
   store.remove("leader");
 }

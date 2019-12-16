@@ -61,4 +61,6 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('user')->group(function () {
     Route::get('/', 'User\UserController@userPage');
+    Route::get('/profile', 'User\UserController@profilePage')->name('user.profile');
+    Route::get('/message', 'User\MessageController@messagePage')->name('user.message');
 });
