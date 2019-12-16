@@ -25,7 +25,7 @@ var IsEmailInUse = async email => {
 };
 
 var formateDate = d => {
-  let created_at = new Date(d.date);
+  let created_at = new Date(d);
   return created_at.toString().slice(0, 24);
 };
 

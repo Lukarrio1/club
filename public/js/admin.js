@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "./";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 39);
+/******/ 	return __webpack_require__(__webpack_require__.s = 41);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -73,7 +73,7 @@
 "use strict";
 
 
-var bind = __webpack_require__(9);
+var bind = __webpack_require__(11);
 
 /*global toString:true*/
 
@@ -376,10 +376,24 @@ module.exports = {
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(15);
+module.exports = __webpack_require__(16);
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+var toast = function toast(msg, type, position) {
+  notif({
+    msg: msg,
+    type: type,
+    position: position
+  });
+};
+
+module.exports = { toast: toast };
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10984,14 +10998,14 @@ return jQuery;
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(29);
+var normalizeHeaderName = __webpack_require__(30);
 
 var PROTECTION_PREFIX = /^\)\]\}',?\n/;
 var DEFAULT_CONTENT_TYPE = {
@@ -11008,10 +11022,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(5);
+    adapter = __webpack_require__(7);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(5);
+    adapter = __webpack_require__(7);
   }
   return adapter;
 }
@@ -11085,33 +11099,86 @@ module.exports = defaults;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports) {
 
-var toast = function toast(msg, type, position) {
-  notif({
-    msg: msg,
-    type: type,
-    position: position
-  });
+var get = function get(key) {
+  return JSON.parse(localStorage.getItem(key)) || null;
 };
 
-module.exports = { toast: toast };
+var set = function set(key, data) {
+  return localStorage.setItem(key, JSON.stringify(data));
+};
+
+var remove = function remove(key) {
+  return localStorage.removeItem(key) ? 1 : 0;
+};
+
+module.exports = { get: get, set: set, remove: remove };
 
 /***/ }),
-/* 5 */
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var axios = __webpack_require__(1);
+
+var validateEmail = function validateEmail(email) {
+  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+};
+
+var IsEmailInUse = async function IsEmailInUse(email) {
+  var fd = new FormData();
+  if (!validateEmail(email)) {
+    return 1;
+  } else {
+    try {
+      fd.append("email", email);
+      var res = await axios.post("/admin/user/emailCheck", fd);
+      if (res.data.status == 0) {
+        return 0;
+      } else {
+        return 1;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+};
+
+var formateDate = function formateDate(d) {
+  var created_at = new Date(d);
+  return created_at.toString().slice(0, 24);
+};
+
+var IsClubAvai = async function IsClubAvai(club) {
+  try {
+    var res = await axios.get("/admin/clubs");
+    var result = res.data.filter(function (c) {
+      return c.name == club;
+    });
+    return result;
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+module.exports = { validateEmail: validateEmail, IsEmailInUse: IsEmailInUse, formateDate: formateDate, IsClubAvai: IsClubAvai };
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var settle = __webpack_require__(21);
-var buildURL = __webpack_require__(24);
-var parseHeaders = __webpack_require__(30);
-var isURLSameOrigin = __webpack_require__(28);
-var createError = __webpack_require__(8);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(23);
+var settle = __webpack_require__(22);
+var buildURL = __webpack_require__(25);
+var parseHeaders = __webpack_require__(31);
+var isURLSameOrigin = __webpack_require__(29);
+var createError = __webpack_require__(10);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(24);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -11207,7 +11274,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(26);
+      var cookies = __webpack_require__(27);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -11284,7 +11351,7 @@ module.exports = function xhrAdapter(config) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11310,7 +11377,7 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11322,13 +11389,13 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var enhanceError = __webpack_require__(20);
+var enhanceError = __webpack_require__(21);
 
 /**
  * Create an Error with the specified message, config, error code, and response.
@@ -11346,7 +11413,7 @@ module.exports = function createError(message, config, code, response) {
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11362,73 +11429,6 @@ module.exports = function bind(fn, thisArg) {
   };
 };
 
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-var get = function get(key) {
-  return JSON.parse(localStorage.getItem(key)) || null;
-};
-
-var set = function set(key, data) {
-  return localStorage.setItem(key, JSON.stringify(data));
-};
-
-var remove = function remove(key) {
-  return localStorage.removeItem(key) ? 1 : 0;
-};
-
-module.exports = { get: get, set: set, remove: remove };
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var axios = __webpack_require__(1);
-
-var validateEmail = function validateEmail(email) {
-  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(email);
-};
-
-var IsEmailInUse = async function IsEmailInUse(email) {
-  var fd = new FormData();
-  if (!validateEmail(email)) {
-    return 1;
-  } else {
-    try {
-      fd.append("email", email);
-      var res = await axios.post("/admin/user/emailCheck", fd);
-      if (res.data.status == 0) {
-        return 0;
-      } else {
-        return 1;
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-};
-
-var formateDate = function formateDate(d) {
-  var created_at = new Date(d.date);
-  return created_at.toString().slice(0, 24);
-};
-
-var IsClubAvai = async function IsClubAvai(club) {
-  try {
-    var res = await axios.get("/admin/clubs");
-    var result = res.data.filter(function (c) {
-      return c.name == club;
-    });
-    return result;
-  } catch (err) {
-    console.log(err.message);
-  }
-};
-
-module.exports = { validateEmail: validateEmail, IsEmailInUse: IsEmailInUse, formateDate: formateDate, IsClubAvai: IsClubAvai };
 
 /***/ }),
 /* 12 */
@@ -11626,18 +11626,18 @@ process.umask = function() { return 0; };
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__js_admin_admin_js__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__js_admin_user__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__admin_club__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__admin_admin_js__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__admin_user__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__admin_club__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__admin_club___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__admin_club__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__admin_message__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__admin_message__ = __webpack_require__(35);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-__webpack_require__(35);
+__webpack_require__(37);
 
 
 
@@ -11649,22 +11649,23 @@ __webpack_require__(35);
  */
 
 /***/ }),
-/* 14 */
+/* 14 */,
+/* 15 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var bind = __webpack_require__(9);
-var Axios = __webpack_require__(17);
-var defaults = __webpack_require__(3);
+var bind = __webpack_require__(11);
+var Axios = __webpack_require__(18);
+var defaults = __webpack_require__(4);
 
 /**
  * Create an instance of Axios
@@ -11697,15 +11698,15 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(6);
-axios.CancelToken = __webpack_require__(16);
-axios.isCancel = __webpack_require__(7);
+axios.Cancel = __webpack_require__(8);
+axios.CancelToken = __webpack_require__(17);
+axios.isCancel = __webpack_require__(9);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(31);
+axios.spread = __webpack_require__(32);
 
 module.exports = axios;
 
@@ -11714,13 +11715,13 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Cancel = __webpack_require__(6);
+var Cancel = __webpack_require__(8);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -11778,18 +11779,18 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var defaults = __webpack_require__(3);
+var defaults = __webpack_require__(4);
 var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(18);
-var dispatchRequest = __webpack_require__(19);
-var isAbsoluteURL = __webpack_require__(27);
-var combineURLs = __webpack_require__(25);
+var InterceptorManager = __webpack_require__(19);
+var dispatchRequest = __webpack_require__(20);
+var isAbsoluteURL = __webpack_require__(28);
+var combineURLs = __webpack_require__(26);
 
 /**
  * Create a new instance of Axios
@@ -11870,7 +11871,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11929,16 +11930,16 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var transformData = __webpack_require__(22);
-var isCancel = __webpack_require__(7);
-var defaults = __webpack_require__(3);
+var transformData = __webpack_require__(23);
+var isCancel = __webpack_require__(9);
+var defaults = __webpack_require__(4);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -12015,7 +12016,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12041,13 +12042,13 @@ module.exports = function enhanceError(error, config, code, response) {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var createError = __webpack_require__(8);
+var createError = __webpack_require__(10);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -12073,7 +12074,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12100,7 +12101,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12143,7 +12144,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12218,7 +12219,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12237,7 +12238,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12297,7 +12298,7 @@ module.exports = (
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12318,7 +12319,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12393,7 +12394,7 @@ module.exports = (
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12412,7 +12413,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12456,7 +12457,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12490,18 +12491,18 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* unused harmony export getAdmin */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_jquery__);
 
 
-var toast = __webpack_require__(4);
+var toast = __webpack_require__(2);
 
 var navAdminName = document.querySelector("#navAdminName");
 var adminEditForm = document.querySelector("#editAdmin");
@@ -12593,14 +12594,14 @@ var adminDelete = async function adminDelete() {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var axios = __webpack_require__(1);
-var $ = __webpack_require__(2);
-var val = __webpack_require__(11);
-var nt = __webpack_require__(4);
-var store = __webpack_require__(10);
+var $ = __webpack_require__(3);
+var val = __webpack_require__(6);
+var nt = __webpack_require__(2);
+var store = __webpack_require__(5);
 var searchClub = document.querySelector("#searchClub");
 var clubOutPut = document.querySelector("#clubOutPut");
 var clubCounts = document.querySelector("#clubCounts");
@@ -12641,7 +12642,8 @@ var SearchClub = async function SearchClub() {
     if (clubCounts) clubCounts.innerHTML = res.data.length;
     res.data.forEach(function (c, i) {
       var stripe = i % 2 ? "table-info" : "";
-      outPut += "<tr class=\"" + stripe + "\">\n      <th scope=\"row\" class=\"text-center\">" + i + "</th>\n      <td class=\"text-center\">" + c.name + "</td>\n      <td class=\"text-center\">" + c.location + "</td>\n      <td class=\"text-center\">" + c.member_count + "</td>\n      <td class=\"text-center\">" + val.formateDate(c.created_at) + "</td>\n      <td class=\"text-center\">\n          <div class=\"row\">\n          <div class=\"col-sm-6 text-right\">\n          <a href=\"#!\" title =\"Edit " + c.name + "\"  data-toggle=\"modal\"\n          data-target=\"#clubEditModal\"class=\"text-warning editClubAction\" id=\"editClub" + c.id + "\"><i class=\"fas fa-edit\"></i></a>\n          </div>\n          <div class=\"col-sm-6 text-left\">\n          <a href=\"#!\" title =\"Delete " + c.name + "\" class=\"text-danger deleteClubAction\" id=\"deleteClub" + c.id + "\"><i class=\"fas fa-trash\"></i></a>\n          </div>\n\n          </div>\n\n      </td>\n  </tr>";
+      var name = c.leader ? c.leader.name : "No leader";
+      outPut += "<tr class=\"" + stripe + "\">\n      <th scope=\"row\" class=\"text-center\">" + i + "</th>\n      <th scope=\"row\" class=\"text-center\"><a href=\"#!\" class=\"text-dark leader\" id=\"leader" + c.id + "\">" + name + "</a></th>\n      <td class=\"text-center\" id=\"club" + c.id + "\">" + c.name + "</td>\n      <td class=\"text-center\">" + c.location + "</td>\n      <td class=\"text-center\">" + c.member_count + "</td>\n      <td class=\"text-center\">" + val.formateDate(c.created_at.date) + "</td>\n      <td class=\"text-center\">\n          <div class=\"row\">\n          <div class=\"col-sm-6 text-right\">\n          <a href=\"#!\" title =\"Edit " + c.name + "\"  data-toggle=\"modal\"\n          data-target=\"#clubEditModal\"class=\"text-warning editClubAction\" id=\"editClub" + c.id + "\"><i class=\"fas fa-edit\"></i></a>\n          </div>\n          <div class=\"col-sm-6 text-left\">\n          <a href=\"#!\" title =\"Delete " + c.name + "\" class=\"text-danger deleteClubAction\" id=\"deleteClub" + c.id + "\"><i class=\"fas fa-trash\"></i></a>\n          </div>\n\n          </div>\n\n      </td>\n  </tr>";
     });
     if (clubOutPut) {
       clubOutPut.innerHTML = outPut;
@@ -12663,6 +12665,20 @@ var SearchClub = async function SearchClub() {
           var id = e.id.substring(8);
           store.set("club_id", id);
           populateEditModal(id);
+        });
+      });
+    }
+
+    var leader = document.querySelectorAll(".leader");
+    if (leader) {
+      leader.forEach(function (l) {
+        l.addEventListener("click", function () {
+          if (l.innerHTML != "No leader") {
+            store.set("leader", { leader: l.innerHTML });
+            location.href = "/admin/users";
+          } else {
+            nt.toast("Sorry this club has no leader.", "error", "center");
+          }
         });
       });
     }
@@ -12755,20 +12771,161 @@ var EditClub = async function EditClub(id) {
 };
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery__ = __webpack_require__(2);
+
+
+var store = __webpack_require__(5);
+var val = __webpack_require__(6);
+var nt = __webpack_require__(2);
+
+var allClubs = document.querySelector("#allClubs");
+var mClubSearch = document.querySelector("#searchMessage");
+var clubNameFm = document.querySelector("#clubNameFm");
+var allMessages = document.querySelector("#allMessages");
+var sendMessage = document.querySelector("#sendMessage");
+var message = document.querySelector("#message");
+var messageBottom = document.getElementById("messageBottom");
+
+if (mClubSearch) {
+  mClubSearch.addEventListener("keyup", function () {
+    SearchClubMessages(mClubSearch.value || "all");
+  });
+}
+
+if (sendMessage) {
+  sendMessage.addEventListener("submit", function (e) {
+    e.preventDefault();
+    sendMessage(message.value);
+  });
+}
+
+var SearchClubMessages = async function SearchClubMessages() {
+  var search = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "all";
+
+  var fd = new FormData();
+  var output = "";
+  fd.append("search", search);
+  try {
+    var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/clubs/search", fd);
+    res.data.forEach(function (_ref) {
+      var id = _ref.id,
+          name = _ref.name;
+
+      var isActive = store.get("club_id") == id ? "active" : "";
+      output += " <li class=\"list-group-item viewGroupMessage " + isActive + "\" style=\"cursor:pointer\" id=\"gm" + id + "\">" + name + "</li>";
+    });
+    if (allClubs) {
+      allClubs.innerHTML = output;
+    }
+    var viewGroupMessage = document.querySelectorAll(".viewGroupMessage");
+    if (viewGroupMessage) {
+      viewGroupMessage.forEach(function (v) {
+        v.addEventListener("click", function () {
+          var id = v.id.substring(2);
+          store.set("club_id", id);
+          SearchClubMessages(mClubSearch.value);
+          getMessages();
+        });
+      });
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+SearchClubMessages();
+
+var getMessages = async function getMessages() {
+  try {
+    var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/messages/" + store.get("club_id"));
+    var club = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/club/" + store.get("club_id"));
+    var output = "";
+    res.data.forEach(function (_ref2) {
+      var id = _ref2.id,
+          message = _ref2.message,
+          to = _ref2.to,
+          created_at = _ref2.created_at;
+
+      var date = store.get("club_id") == to ? "<div class=\"text-grey\"><small>Sent on " + val.formateDate(created_at) + "</small></div>" : "<div class=\"text-grey\"><small>Received on " + val.formateDate(created_at) + "</small></div>";
+      var position = store.get("club_id") == to ? "text-right mr-5 mb-1" : "text-left ml-5 mb-1";
+      var isDel = store.get("club_id") == to ? "   <div class=\"collapse " + position + "\" id=\"message" + id + "\">\n          <a href=\"#!\" class=\"text-danger deleteMessage\" id=\"deleteMessage" + id + "\"><i class=\"fas fa-trash\"></i></a>\n          </div>" : "";
+      output += "<div class=\"" + position + "\" data-toggle=\"collapse\" href=\"#message" + id + "\">" + message + " " + date + "</div>\n      " + isDel + "\n   <br>";
+    });
+    if (clubNameFm && allMessages && messageBottom) {
+      clubNameFm.innerHTML = club.data.name;
+      allMessages.innerHTML = output;
+      messageBottom.scrollTop = messageBottom.scrollHeight;
+      messageTimer();
+    }
+
+    var deleteMessage = document.querySelectorAll(".deleteMessage");
+    if (deleteMessage) {
+      deleteMessage.forEach(function (d) {
+        d.addEventListener("click", function () {
+          var id = d.id.substring(13);
+          DeleteMessage(id);
+        });
+      });
+    }
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+var sendMessage = async function sendMessage(msg) {
+  var fd = new FormData();
+  fd.append("message", msg);
+  fd.append("to", store.get("club_id"));
+  try {
+    var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/send/message", fd);
+    getMessages();
+    message.value = "";
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+if (store.get("club_id")) {
+  getMessages();
+}
+
+var DeleteMessage = async function DeleteMessage(id) {
+  try {
+    var res = __WEBPACK_IMPORTED_MODULE_0_axios___default.a.delete("/admin/message/delete/" + id);
+    getMessages();
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+var messageTimer = function messageTimer() {
+  nt.toast("Message Timer  has been called", "success", "center");
+  setInterval(function () {
+    getMessages();
+    messageTimer();
+  }, 17000);
+};
+
+/***/ }),
+/* 36 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_jquery__);
 
 
 
-var toast = __webpack_require__(4);
-var val = __webpack_require__(11);
-var store = __webpack_require__(10);
+var toast = __webpack_require__(2);
+var val = __webpack_require__(6);
+var store = __webpack_require__(5);
 var edit = {
   name: "Member Club",
   location: "Member Club",
@@ -12807,25 +12964,25 @@ if (createUserForm) {
 
 if (searchUser) {
   searchUser.addEventListener("keyup", function () {
-    SearchUser(searchUser.value.length > 3 ? searchUser.value : "all", parishSort.value, clubSort.value, limit.value);
+    UserSearch(searchUser.value.length > 3 ? searchUser.value : "all", parishSort.value, clubSort.value, limit.value);
   });
 }
 
 if (parishSort) {
   parishSort.addEventListener("change", function () {
-    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+    UserSearch(searchUser.value, parishSort.value, clubSort.value, limit.value);
   });
 }
 
 if (limit) {
   limit.addEventListener("change", function () {
-    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+    UserSearch(searchUser.value, parishSort.value, clubSort.value, limit.value);
   });
 }
 
 if (clubSort) {
   clubSort.addEventListener("change", function () {
-    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+    UserSearch(searchUser.value, parishSort.value, clubSort.value, limit.value);
   });
 }
 
@@ -12880,7 +13037,7 @@ var CreateUser = async function CreateUser() {
       var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/create", fd);
       closeCreateUserModalBtn.click();
       toast.toast("Member was added to the club successfully", "success", "center");
-      SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+      UserSearch(searchUser.value, parishSort.value, clubSort.value, limit.value);
       fields.forEach(function (f) {
         return f.value = "";
       });
@@ -12890,7 +13047,7 @@ var CreateUser = async function CreateUser() {
   }
 };
 
-var SearchUser = async function SearchUser() {
+var UserSearch = async function UserSearch() {
   var search = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "all";
   var parish = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "all";
   var club = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "all";
@@ -12901,9 +13058,9 @@ var SearchUser = async function SearchUser() {
   try {
     var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/user/search", fd);
     var clubs = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/clubs");
-    var clubChoice = clubs.data.filter(function (f) {
+    var clubChoice = clubs.data.find(function (f) {
       return f.name === club;
-    })[0] || [];
+    }) || [];
     var pSort = res.data.filter(function (p) {
       return p.parish == parish;
     });
@@ -12934,7 +13091,7 @@ var SearchUser = async function SearchUser() {
       allUserCount.innerHTML = finalSort.length;
     }
     finalSort.forEach(function (f, i) {
-      userOutPut += "<tr>\n      <th scope=\"row\">" + i + "</th>\n      <td>" + f.name + "</td>\n      <td>" + f.email + "</td>\n      <td>" + f.gender + "</td>\n      <td>" + f.age + "</td>\n      <td>" + f.phone + "</td>\n      <td>" + f.trn + "</td>\n      <td>" + f.address + "</td>\n      <td>" + f.parish + "</td>\n      <td>" + f.role.role + "</td>\n      <td>" + f.club.name + "</td>\n      <td>" + val.formateDate(f.created_at) + "</td>\n      <td><div class=\"row\">\n     <div class=\"col-sm-6 text-left\"> \n     <a class=\"text-warning editUser\" title=\"Edit " + f.name + "\" id=\"edit" + f.id + "\" data-toggle=\"modal\"\n     data-target=\"#modalContactForm\">\n     <i class=\"fas fa-edit\">\n     </i>\n     </a>\n     </div>\n      <div class=\"col-sm-6 text-right\">\n      <a class=\"text-danger deleteUser\" title=\"Delete " + f.name + "\" id=\"delete" + f.id + "\">\n      <i class=\"fas fa-trash\"></i></a>\n      </div>\n      </div></td>\n    </tr>";
+      userOutPut += "<tr>\n      <th scope=\"row\">" + i + "</th>\n      <td>" + f.name + "</td>\n      <td>" + f.email + "</td>\n      <td>" + f.gender + "</td>\n      <td>" + f.age + "</td>\n      <td>" + f.phone + "</td>\n      <td>" + f.trn + "</td>\n      <td>" + f.address + "</td>\n      <td>" + f.parish + "</td>\n      <td>" + f.role.role + "</td>\n      <td>" + f.club.name + "</td>\n      <td>" + val.formateDate(f.created_at.date) + "</td>\n      <td><div class=\"row\">\n     <div class=\"col-sm-6 text-left\"> \n     <a class=\"text-warning editUser\" title=\"Edit " + f.name + "\" id=\"edit" + f.id + "\" data-toggle=\"modal\"\n     data-target=\"#modalContactForm\">\n     <i class=\"fas fa-edit\">\n     </i>\n     </a>\n     </div>\n      <div class=\"col-sm-6 text-right\">\n      <a class=\"text-danger deleteUser\" title=\"Delete " + f.name + "\" id=\"delete" + f.id + "\">\n      <i class=\"fas fa-trash\"></i></a>\n      </div>\n      </div></td>\n    </tr>";
     });
     if (userDisplayTable) {
       userDisplayTable.innerHTML = userOutPut;
@@ -12963,6 +13120,12 @@ var SearchUser = async function SearchUser() {
     throw err;
   }
 };
+
+if (store.get("leader") && parishSort && limit) {
+  UserSearch(store.get("leader").leader, parishSort.value, store.get("leader").club, limit.value);
+  searchUser.value = store.get("leader").leader;
+  store.remove("leader");
+}
 
 var clubDropDownSort = async function clubDropDownSort() {
   try {
@@ -13014,7 +13177,7 @@ var removeMember = async function removeMember(id) {
   try {
     var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.delete("/admin/delete/user/" + id);
     toast.toast("Member was removed successfully", "success", "center");
-    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+    UserSearch(searchUser.value, parishSort.value, clubSort.value, limit.value);
   } catch (error) {
     throw error;
   }
@@ -13056,13 +13219,13 @@ var populateEditFrom = async function populateEditFrom(id) {
 
 clubDropDownCreate(edit); //default
 clubDropDownSort();
-SearchUser();
+UserSearch();
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-window._ = __webpack_require__(36);
+window._ = __webpack_require__(38);
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -13070,7 +13233,7 @@ window._ = __webpack_require__(36);
  * code may be modified to fit the specific needs of your application.
  */
 
-window.$ = window.jQuery = __webpack_require__(2);
+window.$ = window.jQuery = __webpack_require__(3);
 
 /**
  * Vue is a modern JavaScript library for building interactive web interfaces
@@ -13098,7 +13261,7 @@ window.axios.defaults.headers.common = {
  */
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -30215,10 +30378,10 @@ window.axios.defaults.headers.common = {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(37), __webpack_require__(38)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(39), __webpack_require__(40)(module)))
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports) {
 
 var g;
@@ -30245,7 +30408,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -30273,129 +30436,12 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(13);
-module.exports = __webpack_require__(14);
+module.exports = __webpack_require__(15);
 
-
-/***/ }),
-/* 40 */,
-/* 41 */,
-/* 42 */,
-/* 43 */,
-/* 44 */,
-/* 45 */,
-/* 46 */,
-/* 47 */,
-/* 48 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_jquery__);
-
-
-var store = __webpack_require__(10);
-
-var allClubs = document.querySelector("#allClubs");
-var mClubSearch = document.querySelector("#searchMessage");
-var clubNameFm = document.querySelector("#clubNameFm");
-var allMessages = document.querySelector("#allMessages");
-var sendMessage = document.querySelector("#sendMessage");
-var message = document.querySelector("#message");
-
-if (mClubSearch) {
-  mClubSearch.addEventListener("keyup", function () {
-    SearchClubMessages(mClubSearch.value || "all");
-  });
-}
-
-if (sendMessage) {
-  sendMessage.addEventListener("submit", function (e) {
-    e.preventDefault();
-    sendMessage(message.value);
-  });
-}
-
-var SearchClubMessages = async function SearchClubMessages() {
-  var search = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "all";
-
-  var fd = new FormData();
-  var output = "";
-  fd.append("search", search);
-  try {
-    var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/clubs/search", fd);
-    res.data.forEach(function (_ref) {
-      var id = _ref.id,
-          name = _ref.name;
-
-      var isActive = store.get("club_id") == id ? "active" : "";
-      output += " <li class=\"list-group-item viewGroupMessage " + isActive + "\" style=\"cursor:pointer\" id=\"gm" + id + "\">" + name + "</li>";
-    });
-    if (allClubs) {
-      allClubs.innerHTML = output;
-    }
-    var viewGroupMessage = document.querySelectorAll(".viewGroupMessage");
-    if (viewGroupMessage) {
-      viewGroupMessage.forEach(function (v) {
-        v.addEventListener("click", function () {
-          var id = v.id.substring(2);
-          store.set("club_id", id);
-          SearchClubMessages(mClubSearch.value);
-          getMessages();
-        });
-      });
-    }
-  } catch (err) {
-    throw new Error(err);
-  }
-};
-
-SearchClubMessages();
-
-var getMessages = async function getMessages() {
-  try {
-    var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/messages/" + store.get("club_id"));
-    var club = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get("/admin/club/" + store.get("club_id"));
-    var output = "";
-    res.data.forEach(function (_ref2) {
-      var id = _ref2.id,
-          from = _ref2.from,
-          message = _ref2.message,
-          to = _ref2.to;
-
-      var position = store.get("club_id") == to ? "text-right mr-5 mb-1" : "text-left ml-5 mb-1";
-      output += "<div class=\"" + position + "\">" + message + "<div>hello</div></div>";
-    });
-    if (clubNameFm && allMessages) {
-      clubNameFm.innerHTML = club.data.name;
-      allMessages.innerHTML = output;
-    }
-  } catch (err) {
-    console.log(err.message);
-  }
-};
-
-var sendMessage = async function sendMessage(msg) {
-  var fd = new FormData();
-  fd.append("message", msg);
-  fd.append("to", store.get("club_id"));
-  try {
-    var res = await __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post("/admin/send/message", fd);
-    getMessages();
-    message.value = "";
-  } catch (err) {
-    console.log(err.message);
-  }
-};
-
-if (store.get("club_id")) {
-  getMessages();
-}
 
 /***/ })
 /******/ ]);

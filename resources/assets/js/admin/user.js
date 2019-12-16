@@ -45,7 +45,7 @@ if (createUserForm) {
 
 if (searchUser) {
   searchUser.addEventListener("keyup", () => {
-    SearchUser(
+    UserSearch(
       searchUser.value.length > 3 ? searchUser.value : "all",
       parishSort.value,
       clubSort.value,
@@ -56,19 +56,19 @@ if (searchUser) {
 
 if (parishSort) {
   parishSort.addEventListener("change", () => {
-    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+    UserSearch(searchUser.value, parishSort.value, clubSort.value, limit.value);
   });
 }
 
 if (limit) {
   limit.addEventListener("change", () => {
-    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+    UserSearch(searchUser.value, parishSort.value, clubSort.value, limit.value);
   });
 }
 
 if (clubSort) {
   clubSort.addEventListener("change", () => {
-    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+    UserSearch(searchUser.value, parishSort.value, clubSort.value, limit.value);
   });
 }
 
@@ -151,7 +151,7 @@ var CreateUser = async () => {
         "success",
         "center"
       );
-      SearchUser(
+      UserSearch(
         searchUser.value,
         parishSort.value,
         clubSort.value,
@@ -164,7 +164,7 @@ var CreateUser = async () => {
   }
 };
 
-var SearchUser = async (
+var UserSearch = async (
   search = "all",
   parish = "all",
   club = "all",
@@ -175,7 +175,7 @@ var SearchUser = async (
   try {
     let res = await axios.post("/admin/user/search", fd);
     let clubs = await axios.get("/admin/clubs");
-    let clubChoice = clubs.data.filter(f => f.name === club)[0] || [];
+    let clubChoice = clubs.data.find(f => f.name === club) || [];
     let pSort = res.data.filter(p => p.parish == parish);
     let cSort = res.data.filter(c => c.club.name == club);
     let sorted = [];
@@ -215,7 +215,7 @@ var SearchUser = async (
       <td>${f.parish}</td>
       <td>${f.role.role}</td>
       <td>${f.club.name}</td>
-      <td>${val.formateDate(f.created_at)}</td>
+      <td>${val.formateDate(f.created_at.date)}</td>
       <td><div class="row">
      <div class="col-sm-6 text-left"> 
      <a class="text-warning editUser" title="Edit ${f.name}" id="edit${
@@ -263,6 +263,17 @@ var SearchUser = async (
   }
 };
 
+if (store.get("leader") && parishSort && limit) {
+  UserSearch(
+    store.get("leader").leader,
+    parishSort.value,
+    store.get("leader").club,
+    limit.value
+  );
+  searchUser.value = store.get("leader").leader;
+  store.remove("leader");
+}
+
 var clubDropDownSort = async () => {
   try {
     let clubs = await axios.get("/admin/clubs");
@@ -309,7 +320,7 @@ var removeMember = async id => {
   try {
     let res = await axios.delete("/admin/delete/user/" + id);
     toast.toast("Member was removed successfully", "success", "center");
-    SearchUser(searchUser.value, parishSort.value, clubSort.value, limit.value);
+    UserSearch(searchUser.value, parishSort.value, clubSort.value, limit.value);
   } catch (error) {
     throw error;
   }
@@ -356,4 +367,4 @@ var populateEditFrom = async id => {
 
 clubDropDownCreate(edit); //default
 clubDropDownSort();
-SearchUser();
+UserSearch();

@@ -37,8 +37,9 @@
         </div>
         <div class="card-body">
           <div
-            style="height: 348px; overflow: auto; overflow-x: hidden;"
+            style="height: 329px; overflow: auto; overflow-x: hidden;"
             class="align"
+            id="messageBottom"
           >
             <div id="allMessages"></div>
           </div>

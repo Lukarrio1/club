@@ -17,7 +17,6 @@ Route::get('/', function () {
 
 Auth::routes(['register' => false]);
 
-Route::get('/home', 'HomeController@index');
 Route::get('/users/logout', 'Auth\LoginController@userLogout')->name('user.logout');
 
 Route::prefix('admin')->group(function () {
@@ -51,10 +50,15 @@ Route::prefix('admin')->group(function () {
     Route::get('/message/page', 'Admin\MessageController@messagePage')->name('admin.message');
     Route::get('/messages/{id}', 'Admin\MessageController@index');
     Route::post('/send/message', 'Admin\MessageController@store');
+    Route::delete('/message/delete/{message}', 'Admin\MessageController@delete');
 
     // Password reset routes
     Route::post('/password/email', 'Auth\AdminForgotPasswordController@sendResetLinkEmail')->name('admin.password.email');
     Route::get('/password/reset', 'Auth\AdminForgotPasswordController@showLinkRequestForm')->name('admin.password.request');
     Route::post('/password/reset', 'Auth\AdminResetPasswordController@reset');
     Route::get('/password/reset/{token}', 'Auth\AdminResetPasswordController@showResetForm')->name('admin.password.reset');
+});
+
+Route::prefix('user')->group(function () {
+    Route::get('/', 'User\UserController@userPage');
 });

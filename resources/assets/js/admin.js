@@ -5,8 +5,8 @@
  */
 
 require("./bootstrap");
-import "../js/admin/admin.js";
-import "../js/admin/user";
+import "./admin/admin.js";
+import "./admin/user";
 import "./admin/club";
 import "./admin/message";
 /**

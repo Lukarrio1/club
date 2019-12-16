@@ -37,10 +37,11 @@
                 <thead>
                   <tr class="text-center">
                     <th>#</th>
-                    <th>Name</th>
-                    <th>Location</th>
-                    <th>Member amount</th>
-                    <th>Created At</th>
+                    <th>Club Leader</th>
+                    <th>Club Name</th>
+                    <th>Club Location</th>
+                    <th>Club Member amount</th>
+                    <th>Club Created At</th>
                     <th>Actions</th>
                   </tr>
                 </thead>

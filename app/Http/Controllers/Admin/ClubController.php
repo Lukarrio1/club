@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Club;
 use App\Http\Controllers\Controller;
+use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -58,6 +59,10 @@ class ClubController extends Controller
             ->get() : Club::all();
         foreach ($results as $club) {
             $amount = User::where('club_id', $club->id)->get();
+            $userRole = array();
+            foreach ($amount as $user) {
+                $userRole = Role::where(['user_id' => $user->id], ['role', 'leader'])->first();
+            }
             $clubs[] = [
                 'name' => $club->name,
                 'location' => $club->location,
@@ -65,6 +70,7 @@ class ClubController extends Controller
                 'updated_at' => $club->update_at,
                 'member_count' => count($amount) > 0 ? count($amount) : 0,
                 'id' => $club->id,
+                'leader' => !empty($userRole) ? $user : null,
             ];
         }
         return $clubs;

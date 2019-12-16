@@ -53,9 +53,15 @@ class MessageController extends Controller
     public function Fac()
     {
         $store = new Message;
-        $store->to = 12;
-        $store->from = 1;
-        $store->message = "hello there";
+        $store->to = 1;
+        $store->from = 3;
+        $store->message = "man a shella";
         $store->save();
+    }
+
+    public function delete(Message $message)
+    {
+        $message->delete();
+        return ['status' => 200, 'error' => false];
     }
 }

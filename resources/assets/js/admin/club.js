@@ -41,12 +41,16 @@ var SearchClub = async (search = "all") => {
     if (clubCounts) clubCounts.innerHTML = res.data.length;
     res.data.forEach((c, i) => {
       let stripe = i % 2 ? "table-info" : "";
+      let name = c.leader ? c.leader.name : "No leader";
       outPut += `<tr class="${stripe}">
       <th scope="row" class="text-center">${i}</th>
-      <td class="text-center">${c.name}</td>
+      <th scope="row" class="text-center"><a href="#!" class="text-dark leader" id="leader${
+        c.id
+      }">${name}</a></th>
+      <td class="text-center" id="club${c.id}">${c.name}</td>
       <td class="text-center">${c.location}</td>
       <td class="text-center">${c.member_count}</td>
-      <td class="text-center">${val.formateDate(c.created_at)}</td>
+      <td class="text-center">${val.formateDate(c.created_at.date)}</td>
       <td class="text-center">
           <div class="row">
           <div class="col-sm-6 text-right">
@@ -88,6 +92,20 @@ var SearchClub = async (search = "all") => {
           let id = e.id.substring(8);
           store.set("club_id", id);
           populateEditModal(id);
+        });
+      });
+    }
+
+    var leader = document.querySelectorAll(".leader");
+    if (leader) {
+      leader.forEach(l => {
+        l.addEventListener("click", () => {
+          if (l.innerHTML != "No leader") {
+            store.set("leader", { leader: l.innerHTML });
+            location.href = "/admin/users";
+          } else {
+            nt.toast("Sorry this club has no leader.", "error", "center");
+          }
         });
       });
     }

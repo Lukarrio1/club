@@ -65,7 +65,7 @@
     ></script>
     <!-- MDB core JavaScript -->
     <script src="{{asset('js/notifIt.js')}}"></script>
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/admin.js') }}"></script>
     <script src="{{ asset('js/mdb.min.js') }}"></script>
     <script>
       $(document).ready(() => {

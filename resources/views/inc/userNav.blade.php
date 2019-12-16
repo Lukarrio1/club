@@ -15,25 +15,24 @@
       <li>
         <ul class="collapsible collapsible-accordion">
           <li>
-            <a class="text-dark waves-effect" href="{{ route('admin.users') }}"
-              ><i class="fas fa-user-friends"></i> Users</a
+            <a class="text-dark waves-effect" href="#!"
+              ><i class="fas fa-user-friends"></i>Page Here</a
             >
           </li>
           <li>
             <a
-              href="{{ route('admin.clubs') }}"
+              href="#!"
               class="collapsible-header waves-effect"
-              ><i class="fas fa-university"></i> Clubs
+              ><i class="fas fa-university"></i> Page Here
             </a>
           </li>
           <li>
             <a
-              href="{{ route('admin.message') }}"
+              href="#!"
               class="collapsible-header waves-effect"
-              ><i class="fas fa-envelope"></i> Message
+              ><i class="fas fa-envelope"></i> Page Here
             </a>
           </li>
-     
         </ul>
       </li>
       <!--/. Side navigation links -->
@@ -85,13 +84,14 @@
           aria-haspopup="true"
           aria-expanded="false"
         >
-          <span id="navAdminName"></span>
+          <span id="navUserName"></span>
+          {{Auth::user()->name}}
         </a>
         <div
           class="dropdown-menu dropdown-menu-right"
           aria-labelledby="navbarDropdownMenuLink"
         >
-          <a class="dropdown-item" href="{{ route('admin.edit') }}"
+          <a class="dropdown-item" href="#!"
             ><i class="fas fa-user"></i> My Account</a
           >
           <a
