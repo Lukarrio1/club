@@ -22,10 +22,10 @@ class Leader
         $roles = Role::where('user_id', $user->id)->get();
         $just_role = array();
         foreach ($roles as $role) {
-            $just_role[] = [$role->role];
+            $just_role = [$role->role];
         }
         if (in_array('leader', $just_role)) {
-            $next($request);
+            return $next($request);
         } else {
             return redirect()->back();
         }

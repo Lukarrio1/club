@@ -1,8 +1,6 @@
-import axios from "axios";
-
-var store = require("../components/localStorage");
-var val = require("../components/validate");
 var nt = require("../components/toast");
+var val = require("../components/validate");
+var store = require("../components/localStorage");
 
 var allClubs = document.querySelector("#allClubs");
 var mClubSearch = document.querySelector("#searchMessage");
@@ -14,7 +12,7 @@ var messageBottom = document.getElementById("messageBottom");
 
 if (mClubSearch) {
   mClubSearch.addEventListener("keyup", () => {
-    SearchClubMessages(mClubSearch.value || "all");
+    SearchClubMessages(mClubSearch.value);
   });
 }
 
@@ -30,10 +28,13 @@ var SearchClubMessages = async (search = "all") => {
   let output = "";
   fd.append("search", search);
   try {
-    let res = await axios.post("/admin/clubs/search", fd);
+    let res = await axios.post("/user/clubs/search", fd);
+    let user = await axios.get("/user/active");
+
     res.data.forEach(({ id, name }) => {
       let isActive = store.get("club_id") == id ? "active" : "";
-      output += ` <li class="list-group-item viewGroupMessage ${isActive}" style="cursor:pointer" id="gm${id}">${name}</li>`;
+      if (user.data.club_id != id)
+        output += ` <li class="list-group-item viewGroupMessage ${isActive}" style="cursor:pointer" id="gm${id}">${name}</li>`;
     });
     if (allClubs) {
       allClubs.innerHTML = output;
@@ -54,12 +55,11 @@ var SearchClubMessages = async (search = "all") => {
   }
 };
 
-SearchClubMessages();
-
 var getMessages = async () => {
   try {
-    let res = await axios.get(`/admin/messages/${store.get("club_id")}`);
-    let club = await axios.get(`/admin/club/${store.get("club_id")}`);
+    let res = await axios.get("/user/messages/" + store.get("club_id"));
+    let club = await axios.get("/user/club/" + store.get("club_id"));
+    console.log(club.data);
     let output = "";
     res.data.forEach(({ id, message, to, created_at }) => {
       let date =
@@ -72,8 +72,8 @@ var getMessages = async () => {
             )}</small></div>`;
       let position =
         store.get("club_id") == to
-          ? "text-right mr-5 mb-1"
-          : "text-left ml-5 mb-1";
+          ? "text-right mr-2 mb-1"
+          : "text-left ml-2 mb-1";
       let isDel =
         store.get("club_id") == to
           ? `   <div class="collapse ${position}" id="message${id}">
@@ -84,24 +84,13 @@ var getMessages = async () => {
       ${isDel}
    <br>`;
     });
-    if (clubNameFm && allMessages && messageBottom) {
+    if (allMessages && messageBottom && clubNameFm) {
       clubNameFm.innerHTML = club.data.name;
       allMessages.innerHTML = output;
       messageBottom.scrollTop = messageBottom.scrollHeight;
-      messageTimer();
-    }
-
-    var deleteMessage = document.querySelectorAll(".deleteMessage");
-    if (deleteMessage) {
-      deleteMessage.forEach(d => {
-        d.addEventListener("click", () => {
-          let id = d.id.substring(13);
-          DeleteMessage(id);
-        });
-      });
     }
   } catch (err) {
-    console.log(err.message);
+    nt.toast(err.message, "error", "center");
   }
 };
 
@@ -110,31 +99,29 @@ var sendMessage = async msg => {
   fd.append("message", msg);
   fd.append("to", store.get("club_id"));
   try {
-    let res = await axios.post("/admin/send/message", fd);
+    let res = await axios.post("/user/message", fd);
+    if (res.data.error) {
+      nt.toast(res.data.status, "error", "center");
+    }
     getMessages();
     message.value = "";
   } catch (err) {
-    console.log(err.message);
+    nt.toast(err.message, "error", "center");
   }
 };
+
+setInterval(() => {
+  getMessages();
+}, 10000);
 
 if (store.get("club_id")) {
   getMessages();
 }
-
-var DeleteMessage = async id => {
-  try {
-    let res = axios.delete("/admin/message/delete/" + id);
-    getMessages();
-  } catch (err) {
-    throw new Error(err);
-  }
-};
-
-setInterval(() => getMessages(), 10000);
 
 setTimeout(() => {
   if (messageBottom) {
     messageBottom.scrollTop = messageBottom.scrollHeight;
   }
 }, 1000);
+
+SearchClubMessages();

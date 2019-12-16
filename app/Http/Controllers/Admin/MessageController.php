@@ -16,7 +16,6 @@ class MessageController extends Controller
 
     public function index($id)
     {
-        // $this->Fac();
         $messages =
         Message::where(function ($q) use ($id) {
             $q->where('from', Auth::user()->id);

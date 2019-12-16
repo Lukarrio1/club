@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\User;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -13,7 +15,7 @@ class UserController extends Controller
 
     public function index()
     {
-
+        return User::find(Auth::user()->id);
     }
 
     public function userPage()
