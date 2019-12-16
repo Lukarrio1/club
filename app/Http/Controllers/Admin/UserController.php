@@ -60,7 +60,7 @@ class UserController extends Controller
         $users = array();
         foreach ($isLeader as $user) {
             $u = User::where('id', $user->user_id)->first();
-            $user[] = [$u];
+            $users[] = [$u];
         }
         if (count($users) > 0) {
             return ['status' => 'There is already a leader for that club', 'error' => true];
