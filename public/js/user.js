@@ -29676,6 +29676,7 @@ module.exports = function(module) {
 
 __webpack_require__(30);
 __webpack_require__(41);
+__webpack_require__(52);
 
 /***/ }),
 /* 36 */,
@@ -29689,6 +29690,7 @@ __webpack_require__(41);
 var nt = __webpack_require__(3);
 var val = __webpack_require__(11);
 var store = __webpack_require__(10);
+var notify = __webpack_require__(52);
 
 var allClubs = document.querySelector("#allClubs");
 var mClubSearch = document.querySelector("#searchMessage");
@@ -29751,26 +29753,32 @@ var getMessages = async function getMessages() {
   try {
     var res = await axios.get("/user/messages/" + store.get("club_id"));
     var club = await axios.get("/user/club/" + store.get("club_id"));
-    console.log(club.data);
-    var output = "";
-    res.data.forEach(function (_ref2) {
-      var id = _ref2.id,
-          message = _ref2.message,
-          to = _ref2.to,
-          created_at = _ref2.created_at;
-
-      var date = store.get("club_id") == to ? "<div class=\"text-grey\"><small>Sent on " + val.formateDate(created_at) + "</small></div>" : "<div class=\"text-grey\"><small>Received on " + val.formateDate(created_at) + "</small></div>";
-      var position = store.get("club_id") == to ? "text-right mr-2 mb-1" : "text-left ml-2 mb-1";
-      var isDel = store.get("club_id") == to ? "   <div class=\"collapse " + position + "\" id=\"message" + id + "\">\n          <a href=\"#!\" class=\"text-danger deleteMessage\" id=\"deleteMessage" + id + "\"><i class=\"fas fa-trash\"></i></a>\n          </div>" : "";
-      output += "<div class=\"" + position + "\" data-toggle=\"collapse\" href=\"#message" + id + "\">" + message + " " + date + "</div>\n      " + isDel + "\n   <br>";
+    var roles = await axios.get("/user/active/role");
+    var role = roles.data.find(function (_ref2) {
+      var role = _ref2.role;
+      return role == "leader";
     });
-    if (allMessages && messageBottom && clubNameFm) {
-      clubNameFm.innerHTML = club.data.name;
-      allMessages.innerHTML = output;
-      messageBottom.scrollTop = messageBottom.scrollHeight;
+    var output = "";
+    if (role) {
+      res.data.forEach(function (_ref3) {
+        var id = _ref3.id,
+            message = _ref3.message,
+            to = _ref3.to,
+            created_at = _ref3.created_at;
+
+        var date = store.get("club_id") == to ? "<div class=\"text-grey\"><small>Sent on " + val.formateDate(created_at) + "</small></div>" : "<div class=\"text-grey\"><small>Received on " + val.formateDate(created_at) + "</small></div>";
+        var position = store.get("club_id") == to ? "text-right mr-2 mb-1" : "text-left ml-2 mb-1";
+        var isDel = store.get("club_id") == to ? "   <div class=\"collapse " + position + "\" id=\"message" + id + "\">\n      <a href=\"#!\" class=\"text-danger deleteMessage\" id=\"deleteMessage" + id + "\"><i class=\"fas fa-trash\"></i></a>\n          </div>" : "";
+        output += "<div class=\"" + position + "\" data-toggle=\"collapse\" href=\"#message" + id + "\">" + message + " " + date + "</div>\n      " + isDel + "\n   <br>";
+      });
+      if (allMessages && messageBottom && clubNameFm) {
+        clubNameFm.innerHTML = club.data.name;
+        allMessages.innerHTML = output;
+        messageBottom.scrollTop = messageBottom.scrollHeight;
+      }
     }
   } catch (err) {
-    nt.toast(err.message, "error", "center");
+    throw err;
   }
 };
 
@@ -29780,18 +29788,20 @@ var sendMessage = async function sendMessage(msg) {
   fd.append("to", store.get("club_id"));
   try {
     var res = await axios.post("/user/message", fd);
+    console.log(res.data);
     if (res.data.error) {
       nt.toast(res.data.status, "error", "center");
     }
     getMessages();
     message.value = "";
   } catch (err) {
-    nt.toast(err.message, "error", "center");
+    throw new Error(err);
   }
 };
 
 setInterval(function () {
   getMessages();
+  notify.getNotifications();
 }, 10000);
 
 if (store.get("club_id")) {
@@ -29813,6 +29823,67 @@ SearchClubMessages();
 
 module.exports = __webpack_require__(35);
 
+
+/***/ }),
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */,
+/* 49 */,
+/* 50 */,
+/* 51 */,
+/* 52 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function($) {var userNotifications = document.querySelector("#userNotifications");
+var notificationBell = $("#notificationBell");
+
+var getNotifications = async function getNotifications() {
+  try {
+    var res = await axios.get("/user/notifications");
+    var output = "";
+    res.data.forEach(function (n) {
+      output += "<a class=\"dropdown-item " + n.class + "\" href=\"#!\" id=\"notification" + n.id + "\"><i class=\"" + n.icon + "\"></i> " + n.notify + "</a>";
+    });
+    if (userNotifications && notificationBell) {
+      userNotifications.innerHTML = output;
+      if (res.data.length > 0) {
+        notificationBell.addClass("text-info");
+        notificationBell.html(" " + res.data.length);
+      } else {
+        notificationBell.removeClass("text-info");
+      }
+    }
+
+    var ntMessages = document.querySelectorAll(".message");
+    if (ntMessages) {
+      ntMessages.forEach(function (m) {
+        m.addEventListener("click", function () {
+          var id = m.id.substring(12);
+          removeNotification(id);
+          location.href = "/user/messagePage";
+        });
+      });
+    }
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+getNotifications();
+
+var removeNotification = async function removeNotification(id) {
+  try {
+    var res = await axios.delete("/user/notification/remove/" + id);
+    getNotifications();
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+module.exports = { getNotifications: getNotifications };
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ })
 /******/ ]);

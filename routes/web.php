@@ -61,7 +61,7 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('user')->group(function () {
     Route::get('/', 'User\UserController@userPage');
-    Route::get('/active', 'User\UserController@index');
+    Route::get('/active/{key?}', 'User\UserController@index');
     Route::get('/profile', 'User\UserController@profilePage')->name('user.profile');
     Route::group(['middleware' => ['auth', 'leader']], function () {
         Route::get('/messagePage', 'User\MessageController@messagePage')->name('user.message');
@@ -71,5 +71,8 @@ Route::prefix('user')->group(function () {
 
     Route::post('/clubs/search', 'User\ClubController@index');
     Route::get('/club/{club}', 'User\ClubController@single');
+
+    Route::get('/notifications', 'User\NotificationController@getMessageNotifications');
+    Route::delete('/notification/remove/{notification}', 'User\NotificationController@destroy');
 
 });

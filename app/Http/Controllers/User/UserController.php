@@ -13,9 +13,20 @@ class UserController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index($key = "")
     {
-        return User::find(Auth::user()->id);
+        $user = User::find(Auth::user()->id);
+        switch ($key) {
+            case 'role':
+                return $user->roles;
+                break;
+            case 'club':
+                return $user->club;
+                break;
+            default:
+                return $user;
+                break;
+        }
     }
 
     public function userPage()

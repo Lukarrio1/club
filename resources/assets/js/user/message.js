@@ -1,6 +1,7 @@
 var nt = require("../components/toast");
 var val = require("../components/validate");
 var store = require("../components/localStorage");
+var notify = require("../components/userNotifications");
 
 var allClubs = document.querySelector("#allClubs");
 var mClubSearch = document.querySelector("#searchMessage");
@@ -59,38 +60,41 @@ var getMessages = async () => {
   try {
     let res = await axios.get("/user/messages/" + store.get("club_id"));
     let club = await axios.get("/user/club/" + store.get("club_id"));
-    console.log(club.data);
+    let roles = await axios.get("/user/active/role");
+    let role = roles.data.find(({ role }) => role == "leader");
     let output = "";
-    res.data.forEach(({ id, message, to, created_at }) => {
-      let date =
-        store.get("club_id") == to
-          ? `<div class="text-grey"><small>Sent on ${val.formateDate(
-              created_at
-            )}</small></div>`
-          : `<div class="text-grey"><small>Received on ${val.formateDate(
-              created_at
-            )}</small></div>`;
-      let position =
-        store.get("club_id") == to
-          ? "text-right mr-2 mb-1"
-          : "text-left ml-2 mb-1";
-      let isDel =
-        store.get("club_id") == to
-          ? `   <div class="collapse ${position}" id="message${id}">
-          <a href="#!" class="text-danger deleteMessage" id="deleteMessage${id}"><i class="fas fa-trash"></i></a>
+    if (role) {
+      res.data.forEach(({ id, message, to, created_at }) => {
+        let date =
+          store.get("club_id") == to
+            ? `<div class="text-grey"><small>Sent on ${val.formateDate(
+                created_at
+              )}</small></div>`
+            : `<div class="text-grey"><small>Received on ${val.formateDate(
+                created_at
+              )}</small></div>`;
+        let position =
+          store.get("club_id") == to
+            ? "text-right mr-2 mb-1"
+            : "text-left ml-2 mb-1";
+        let isDel =
+          store.get("club_id") == to
+            ? `   <div class="collapse ${position}" id="message${id}">
+      <a href="#!" class="text-danger deleteMessage" id="deleteMessage${id}"><i class="fas fa-trash"></i></a>
           </div>`
-          : "";
-      output += `<div class="${position}" data-toggle="collapse" href="#message${id}">${message} ${date}</div>
+            : "";
+        output += `<div class="${position}" data-toggle="collapse" href="#message${id}">${message} ${date}</div>
       ${isDel}
    <br>`;
-    });
-    if (allMessages && messageBottom && clubNameFm) {
-      clubNameFm.innerHTML = club.data.name;
-      allMessages.innerHTML = output;
-      messageBottom.scrollTop = messageBottom.scrollHeight;
+      });
+      if (allMessages && messageBottom && clubNameFm) {
+        clubNameFm.innerHTML = club.data.name;
+        allMessages.innerHTML = output;
+        messageBottom.scrollTop = messageBottom.scrollHeight;
+      }
     }
   } catch (err) {
-    nt.toast(err.message, "error", "center");
+    throw err;
   }
 };
 
@@ -100,18 +104,20 @@ var sendMessage = async msg => {
   fd.append("to", store.get("club_id"));
   try {
     let res = await axios.post("/user/message", fd);
+    console.log(res.data);
     if (res.data.error) {
       nt.toast(res.data.status, "error", "center");
     }
     getMessages();
     message.value = "";
   } catch (err) {
-    nt.toast(err.message, "error", "center");
+    throw new Error(err);
   }
 };
 
 setInterval(() => {
   getMessages();
+  notify.getNotifications();
 }, 10000);
 
 if (store.get("club_id")) {

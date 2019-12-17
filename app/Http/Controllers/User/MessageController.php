@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Club;
 use App\Http\Controllers\Controller;
 use App\Message;
+use App\Notification;
 use App\Role;
 use App\User;
 use Illuminate\Http\Request;
@@ -42,8 +44,7 @@ class MessageController extends Controller
         $just_role = [];
         $users = User::Where('club_id', $request->to)->get();
         foreach ($users as $user) {
-            $roles = Role::where('user_id', $user->id)->get();
-            foreach ($roles as $role) {
+            foreach ($user->roles as $role) {
                 $just_role = [$role->role];
             }
             if (in_array('leader', $just_role)) {
@@ -56,11 +57,22 @@ class MessageController extends Controller
         $to = $leader->club_id;
         $from = Auth::user()->club_id;
         $message = htmlentities($request->message);
-        $store = new Message;
-        $store->to = $to;
-        $store->from = $from;
-        $store->message = $message;
-        $store->save();
+        $club = Club::where('id', $from)->first();
+        $ref_id = Message::create([
+            'to' => $to,
+            'from' => $from,
+            'message' => $message,
+        ])->id;
+
+        Notification::create([
+            're_id' => $to,
+            'user_id' => Auth::user()->id,
+            'class' => "message",
+            'notify' => "You have a new message from $club->name .",
+            'icon' => "fas fa-envelope",
+            'ref_id' => $ref_id,
+        ]);
+
         return ['status' => 200, 'error' => false];
     }
 

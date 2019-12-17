@@ -55,7 +55,7 @@
       <p>Material Design for Bootstrap</p>
     </div>
     <ul class="nav navbar-nav nav-flex-icons ml-auto">
-      {{--
+{{--       
       <li class="nav-item">
         <a class="nav-link"
           ><i class="fas fa-envelope"></i>
@@ -67,14 +67,17 @@
           ><i class="fas fa-comments"></i>
           <span class="clearfix d-none d-sm-inline-block">Support</span></a
         >
-      </li>
-      <li class="nav-item">
-        <a class="nav-link"
-          ><i class="fas fa-user"></i>
-          <span class="clearfix d-none d-sm-inline-block">Account</span></a
+      </li> --}}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle"
+        data-toggle="dropdown"
+          ><i class="fas fa-bell" id="notificationBell"></i>
+          <span class="clearfix d-none d-sm-inline-block">Notifications</span></a
         >
+          <div class="dropdown-menu dropdown-info  dropdown-menu-right" id="userNotifications">
+        </div>
       </li>
-      --}}
+     
       <li class="nav-item dropdown">
         <a
           class="nav-link dropdown-toggle"

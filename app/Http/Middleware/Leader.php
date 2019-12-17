@@ -18,10 +18,9 @@ class Leader
      */
     public function handle($request, Closure $next)
     {
-        $user = User::find(Auth::user()->id);
-        $roles = Role::where('user_id', $user->id)->get();
+        $user = User::find(Auth::user()->id)->roles;
         $just_role = array();
-        foreach ($roles as $role) {
+        foreach ($user as $role) {
             $just_role = [$role->role];
         }
         if (in_array('leader', $just_role)) {
